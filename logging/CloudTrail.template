@@ -1,0 +1,234 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Create CloudTrail resources and attach policies to the publish-user and devops-user.",
+
+  "Parameters" : {
+    "BucketName" : {
+      "Description" : "Name of the S3 bucket (e.g. xxx-cloudtrail).",
+      "Type" : "String",
+      "Default": "name-cloudtrail"
+    },
+    "TopicName" : {
+      "Description" : "Name of the SNS topic.",
+      "Type" : "String",
+      "Default": "name-CloudTrail-SNS"
+    },
+    "PublishUser": {
+      "Description" : "Name of the publish user (created manually).",
+      "Type" : "String",
+      "Default": "publish-cloudtrail"
+    },
+    "DevOpsUser": {
+      "Description" : "Name of the default devops user.",
+      "Type" : "String",
+      "Default": "devops-cloudtrail"
+    }
+  },
+
+  "Resources": {
+    "S3CloudTrail": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Ref": "BucketName"
+        },
+        "AccessControl": "AuthenticatedRead",
+        "VersioningConfiguration": {
+          "Status": "Suspended"
+        }
+      }
+    },
+
+    "TopicCloudTrailSNS": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": {
+          "Ref": "TopicName"
+        },
+        "DisplayName": {
+          "Ref": "TopicName"
+        }
+      }
+    },
+
+    "SNSPolicyCloudTrailSNS": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "Topics": [
+          {
+            "Ref": "TopicCloudTrailSNS"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2008-10-17",
+          "Id": "__default_policy_ID",
+          "Statement": [
+            {
+              "Sid": "__default_statement_ID",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": [
+                "SNS:GetTopicAttributes",
+                "SNS:SetTopicAttributes",
+                "SNS:AddPermission",
+                "SNS:RemovePermission",
+                "SNS:DeleteTopic",
+                "SNS:Subscribe",
+                "SNS:ListSubscriptionsByTopic",
+                "SNS:Publish",
+                "SNS:Receive"
+              ],
+              "Resource": {
+                "Ref": "TopicCloudTrailSNS"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "AWS:SourceOwner": {
+                    "Ref": "AWS::AccountId"
+                  }
+                }
+              }
+            },
+            {
+              "Sid": "AWSCloudTrailSNSPolicy20150319",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Action": "SNS:Publish",
+              "Resource": {
+                "Ref": "TopicCloudTrailSNS"
+              }
+            }
+          ]
+        }
+      }
+    },
+
+    "S3PolicyCloudTrail": {
+      "Type": "AWS::S3::BucketPolicy",
+      "DependsOn": "S3CloudTrail",
+      "Properties": {
+        "Bucket": {
+          "Ref": "S3CloudTrail"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AWSCloudTrailAclCheck20150319",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Action": "s3:GetBucketAcl",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "S3CloudTrail"
+                    },
+                    ""
+                  ]
+                ]
+              }
+            },
+            {
+              "Sid": "AWSCloudTrailWrite20150319",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Action": "s3:PutObject",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "S3CloudTrail"
+                    },
+                    "/bn/AWSLogs/",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+
+    "TrailCloudTrail": {
+      "Type": "AWS::CloudTrail::Trail",
+      "DependsOn": [
+        "S3PolicyCloudTrail"
+      ],
+      "Properties": {
+        "IncludeGlobalServiceEvents": true,
+        "IsLogging": "true",
+        "S3KeyPrefix": "bn",
+        "S3BucketName": {
+          "Ref": "S3CloudTrail"
+        },
+        "SnsTopicName": {
+          "Ref": "TopicCloudTrailSNS"
+        }
+      }
+    },
+
+    "ManagedPolicyS3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn": "S3CloudTrail",
+      "Properties": {
+        "Description": "Managed Policy fo CloudTrail S3",
+        "PolicyDocument" : {
+          "Version": "2012-10-17",
+          "Id":"bn-cloudtrail-s3",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "S3CloudTrail"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        "Users" : [
+          {
+            "Ref": "PublishUser"
+          },
+          {
+            "Ref": "DevOpsUser"
+          }
+        ]
+      }
+    }
+
+  }
+}

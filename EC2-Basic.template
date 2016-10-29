@@ -1,0 +1,80 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description": "Create an EC2 instance.",
+
+  "Parameters" : {
+    "VMName" : {
+      "Description" : "EC2 Name.",
+      "Type" : "String"
+    },
+    "AMI" : {
+      "Description" : "The AMI ID of the image that the EC2 instance to be created from.",
+      "Type" : "String"
+    },
+    "InstanceType" : {
+      "Description" : "VM EC2 instance type.",
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+    ,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "InstanceRole": {
+      "Description" : "Instance IAM Role.",
+      "Type" : "String",
+      "Default" : "EC2InstanceRole"
+    },
+    "SubnetID": {
+      "Description" : "Subnet ID (e.g. subnet-1a11aa1a).",
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "SecurityGroupID": {
+      "Description" : "Security Group ID (e.g. sg-1a11aa1a).",
+      "Type": "AWS::EC2::SecurityGroup::Id"
+    },
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance.",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    }
+  },
+
+  "Resources" : {
+    "VMInstance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Metadata" : { "Comment" : "EC2 Linux" },
+      "Properties" : {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId" : { "Ref": "AMI" },
+        "InstanceType" : { "Ref" : "InstanceType" },
+        "IamInstanceProfile" : { "Ref" : "InstanceRole" },
+        "KeyName" : { "Ref" : "KeyName" },
+        "Monitoring": "false",
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          { "Key" : "Name", "Value" : { "Ref" : "VMName"} },
+          { "Key" : "Service", "Value" : "vm" }
+        ],
+        "NetworkInterfaces" : [{
+          "AssociatePublicIpAddress" : "true",
+          "DeleteOnTermination": "true",
+          "Description": "Primary network interface",
+          "DeviceIndex": 0,
+          "GroupSet": [{ "Ref" : "SecurityGroupID" }],
+          "SubnetId": { "Ref" : "SubnetID" }
+        }]
+      }
+    },
+
+    "IPAddress" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+        "Domain" : "vpc",
+        "InstanceId" : { "Ref" : "VMInstance" }
+      }
+    }
+
+  }
+}

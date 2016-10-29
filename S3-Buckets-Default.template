@@ -1,0 +1,51 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Create some S3 buckets for file sharing.",
+
+  "Parameters" : {
+    "ProjectTag" : {
+      "Type" : "String",
+      "Description" : "Project tag to be used for tagging related sources (e.g. 61-1-xxxx).",
+      "Default": "61-1-xxxx"
+    }
+  },
+
+  "Resources": {
+    "S3BucketLogs": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketName": { "Fn::Join" : ["-", ["internal", {"Ref" : "ProjectTag"}, "logs"]]},
+        "VersioningConfiguration": { "Status": "Suspended" }
+      }
+    },
+
+    "S3BucketInternal": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "AuthenticatedRead",
+        "BucketName": { "Fn::Join" : ["-", ["internal", {"Ref" : "ProjectTag"}]]},
+        "LoggingConfiguration": {
+          "DestinationBucketName": { "Ref": "S3BucketLogs" },
+          "LogFilePrefix": "internal/"
+        },
+        "VersioningConfiguration": { "Status": "Enabled" }
+      }
+    },
+
+    "S3BucketExternal": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "AuthenticatedRead",
+        "BucketName": { "Fn::Join" : ["-", ["external", {"Ref" : "ProjectTag"}, "portal"]]},
+        "LoggingConfiguration": {
+          "DestinationBucketName": { "Ref": "S3BucketLogs" },
+          "LogFilePrefix": "portal/"
+        },
+        "VersioningConfiguration": { "Status": "Enabled" }
+      }
+    }
+
+  }
+}

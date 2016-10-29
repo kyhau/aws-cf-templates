@@ -1,0 +1,142 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Create groups and managed policies for accessing bucket, and ensure the right list of the user are added to the group.",
+
+  "Parameters" : {
+    "BucketName" : {
+      "Description" : "Name of the S3 bucket for storing submission data.",
+      "Type" : "String",
+      "Default": "61-1-xxx-data"
+    },
+    "ReadGroupName" : {
+      "Description" : "Name of the Group for Users to access (read) S3 bucket.",
+      "Type" : "String"
+    },
+    "ReadWriteDeleteGroupName" : {
+      "Description" : "Name of the Group for Users to access (read/write/delete) S3 bucket.",
+      "Type" : "String"
+    }
+  },
+
+  "Resources": {
+    "ManagedPolicyS3Read": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Managed Policy for accessing S3 bucket (read only)",
+        "PolicyDocument" : {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListAllMyBuckets"
+              ],
+              "Resource": "arn:aws:s3:::*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        "Groups" : [
+          { "Ref": "ReadGroupName" }
+        ]
+      }
+    },
+
+    "ManagedPolicyS3ReadWriteDelete": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
+        "PolicyDocument" : {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListAllMyBuckets"
+              ],
+              "Resource": "arn:aws:s3:::*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+              ],
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        "Groups" : [
+          { "Ref": "ReadWriteDeleteGroupName" }
+        ]
+      }
+    }
+
+  }
+}

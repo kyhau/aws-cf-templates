@@ -1,0 +1,21 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Create Groups allowing Read-only or full access of a S3 bucket.",
+
+  "Resources": {
+    "S3InternalReadWriteDeleteGroup" : {
+      "Type" : "AWS::IAM::Group"
+    },
+    "AddUsersToS3InternalReadWriteDeleteGroup" : {
+      "Type" : "AWS::IAM::UserToGroupAddition",
+      "DependsOn": "S3InternalReadWriteDeleteGroup",
+      "Properties" : {
+        "GroupName": { "Ref" : "S3InternalReadWriteDeleteGroup" },
+        "Users" : [
+          "firstname.lastname"
+        ]
+      }
+    }
+  }
+}

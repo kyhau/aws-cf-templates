@@ -18,23 +18,31 @@ Some AWS CloudFormation Templates for personal use.
     - Create an EC2 instance from an AMI.
     - Create an Elastic IP, attached to the EC2 instance.
 
-## Templates for GF Project S3 management
+## Templates for S3 Static Website Hosting
+
+1. `S3-StaticWebsiteHosting.template`
+    - Create S3 bucket with Static Website, Versioning and Logging enabled
+    - Create S3 bucket for logging
+    - Create Bucket Policy for PublicRead access
+    - Create a Managed Policy for managing and uploading files to the S3 bucket
+    - Attach the Managed Policy to the given Group
+
+## Templates for S3 management
 
 1. `UserGroups_S3ReadWriteDelete.template`
-    - Create Groups for BAT to access resources.
+    - Create Groups to access resources.
 
 2. `UserGroups_S3Restricted.template`
-    - Create Groups for BAT to access resources.
+    - Create Groups to access resources.
 
 3. `S3-Buckets-Default.template`
     - Create default S3 buckets (policies not included)
 
-
 4. `S3-Bucket.template`
-    - Create a group and managed policy for accessing bucket for internal file sharing, and ensure the right list of the user are added to the group.
+    - Create a group and managed policy for accessing bucket and ensure the right list of the user are added to the group.
 
 5. `S3-Bucket-Restricted.template`
-    - Create groups and managed policies for accessing bucket for storing submission data, and ensure the right list of the user are added to the group.
+    - Create groups and managed policies for accessing bucket and ensure the right list of the user are added to the group.
 
 ## Templates for Logging and Reporting 
 

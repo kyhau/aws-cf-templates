@@ -1,0 +1,115 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Create S3 bucket for static website hosting.",
+
+  "Parameters" : {
+    "BucketName" : {
+      "Type" : "String",
+      "Description" : "The name of the S3 bucket for static website hosting."
+    },
+    "IndexDoc" : {
+      "Type" : "String",
+      "Description" : "The file name of the index document.",
+      "Default": "index.html"
+    },
+    "ErrorDoc" : {
+      "Type" : "String",
+      "Description" : "The file name of the error document.",
+      "Default": "error.html"
+    },
+    "ReadWriteDeleteGroupName" : {
+      "Description" : "Name of the Group for Users to access and manage the S3 bucket.",
+      "Type" : "String"
+    }
+  },
+
+  "Resources": {
+    "S3BucketLogs": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketName": { "Fn::Join" : ["-", [{"Ref" : "BucketName"}, "logs"]]},
+        "VersioningConfiguration": { "Status": "Suspended" }
+      }
+    },
+
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "DependsOn": ["S3BucketLogs"],
+      "Properties": {
+        "BucketName" : {"Ref":"BucketName"},
+        "AccessControl": "PublicRead",
+        "WebsiteConfiguration": {
+          "IndexDocument": {"Ref" : "IndexDoc"},
+          "ErrorDocument": {"Ref" : "ErrorDoc"}
+        },
+        "LoggingConfiguration": {
+          "DestinationBucketName": { "Ref": "S3BucketLogs" }
+        },
+        "VersioningConfiguration": { "Status": "Enabled" }
+      },
+      "DeletionPolicy": "Retain"
+    },
+
+    "S3BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "DependsOn": ["S3Bucket"],
+      "Properties": {
+        "Bucket": { "Ref": "BucketName" },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "PublicReadForGetBucketObjects",
+              "Action": ["s3:GetObject"],
+              "Effect": "Allow",
+              "Resource": { "Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]] },
+              "Principal": "*"
+            }
+          ]
+        }
+      }
+    },
+
+    "ManagedPolicyS3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn": ["S3Bucket"],
+      "Properties": {
+        "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
+        "PolicyDocument" : {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [ "s3:ListAllMyBuckets" ],
+              "Resource": "arn:aws:s3:::*" },
+            {
+              "Effect": "Allow",
+              "Action": [ "s3:ListBucket", "s3:GetBucketLocation" ],
+              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" } ] ] }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [ "s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
+              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" }, "/*" ] ] }
+            }
+          ]
+        },
+        "Groups" : [
+          { "Ref": "ReadWriteDeleteGroupName" }
+        ]
+      }
+    }
+  },
+
+  "Outputs": {
+    "WebsiteURL": {
+      "Value": { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] },
+      "Description": "URL for website hosted on S3"
+    },
+    "S3BucketSecureURL": {
+      "Value": { "Fn::Join": [ "", [ "https://", { "Fn::GetAtt": [ "S3Bucket", "DomainName" ] } ] ] },
+      "Description": "Name of S3 bucket to hold website content"
+    }
+  }
+}

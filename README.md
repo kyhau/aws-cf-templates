@@ -1,14 +1,29 @@
 # AWS-CF-Templates
 
-Some AWS CloudFormation Templates for personal use.
+Some AWS CloudFormation templates for personal use.
 
 ## Templates for creating some aws resources
 
-1. `BaseInfrastructureForLinuxEC2Instances.template`
-    - Create VPC, InternetGateway, NetworkAcl, Route, RouteTable, Subnet, SecurityGroups for EC2 instances (Linux), SecurityGroup for VPN
+1. `BaseInfrastructure-Linux-SaltMaster.template`
+    - Create VPC (at Sydney)
+    - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
+    - Create SecurityGroup for EC2 (Salt-master)
+        - Special inbound rules
+            - tcp 4505 0.0.0.0/0  salt-master publish-port
+            - tcp 4506 0.0.0.0/0  salt-master ret-port
+    - Create SecurityGroup for VPN
 
-2. `BaseInfrastructureForWinEC2Instances.template`
-    - Create VPC, InternetGateway, NetworkAcl, Route, RouteTable, Subnet, SecurityGroups for EC2 instances (Windows), SecurityGroup for VPN
+2. `BaseInfrastructure-LinuxEC2Instances.template`
+    - Create VPC
+    - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
+    - Create SecurityGroup for EC2 instances (Linux)
+    - Create SecurityGroup for VPN
+
+2. `BaseInfrastructure-WinEC2Instances.template`
+    - Create VPC
+    - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
+    - Create SecurityGroup for EC2 instances (Windows)
+    - Create SecurityGroup for VPN
 
 3. `EC2-OpenVPN.template`
     - Create an EC2 instance from an AMI of an openvpn instance.
@@ -21,28 +36,27 @@ Some AWS CloudFormation Templates for personal use.
 ## Templates for S3 Static Website Hosting
 
 1. `S3-StaticWebsiteHosting.template`
-    - Create S3 bucket with Static Website, Versioning and Logging enabled
-    - Create S3 bucket for logging
-    - Create Bucket Policy for PublicRead access
-    - Create a Managed Policy for managing and uploading files to the S3 bucket
-    - Attach the Managed Policy to the given Group
+    - Create S3 bucket with Static Website, Versioning and Logging enabled.
+    - Create S3 bucket for logging.
+    - Create Bucket Policy for PublicRead access.
+    - Create a Managed Policy for managing and uploading files to the S3 bucket.
+    - Attach the Managed Policy to the given Group.
 
 ## Templates for S3 management
 
-1. `UserGroups_S3ReadWriteDelete.template`
-    - Create Groups to access resources.
+1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy.template`
+    - Create a S3 bucket with versioning and logging enabled.
+    - Create a S3 bucket for logging.
+    - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
+    - Attach the Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
 
-2. `UserGroups_S3Restricted.template`
-    - Create Groups to access resources.
-
-3. `S3-Buckets-Default.template`
-    - Create default S3 buckets (policies not included)
-
-4. `S3-Bucket.template`
-    - Create a group and managed policy for accessing bucket and ensure the right list of the user are added to the group.
-
-5. `S3-Bucket-Restricted.template`
-    - Create groups and managed policies for accessing bucket and ensure the right list of the user are added to the group.
+2. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
+    - Create a S3 bucket with versioning and logging enabled.
+    - Create a S3 bucket for logging.
+    - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
+    - Attach the Read-Write-Delete Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
+    - Create a Managed Policy giving Read-only access to the S3 bucket.
+    - Attach the Read-only Managed Policy to the given Group of `ReadGroupName`.
 
 ## Templates for Logging and Reporting 
 

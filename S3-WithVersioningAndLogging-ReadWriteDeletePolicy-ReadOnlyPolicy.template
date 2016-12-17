@@ -1,0 +1,109 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Create S3 bucket with versioning/logging enabled, a Read-Write-Delete managed policy attached, and a Read-Only managed policy attached.",
+
+  "Parameters" : {
+    "BucketName" : {
+      "Type" : "String",
+      "Description" : "The name of the S3 bucket to be created with the managed policies attached."
+    },
+    "ReadWriteDeleteGroupName" : {
+      "Description" : "Name of the Group to be given Read-Write-Delete access to the given bucket.",
+      "Type" : "String"
+    },
+    "ReadGroupName" : {
+      "Description" : "Name of the Group to be given Read-only access to the given bucket.",
+      "Type" : "String"
+    }
+  },
+
+  "Resources": {
+    "S3BucketLogs": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketName": { "Fn::Join" : ["-", [{"Ref" : "BucketName"}, "logs"]]},
+        "VersioningConfiguration": { "Status": "Suspended" }
+      }
+    },
+
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "DependsOn": ["S3BucketLogs"],
+      "Properties": {
+        "BucketName" : {"Ref":"BucketName"},
+        "AccessControl": "BucketOwnerFullControl",
+        "LoggingConfiguration": {
+          "DestinationBucketName": { "Ref": "S3BucketLogs" }
+        },
+        "VersioningConfiguration": { "Status": "Enabled" }
+      },
+      "DeletionPolicy": "Retain"
+    },
+
+    "ManagedPolicyS3ReadWriteDelete": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn": ["S3Bucket"],
+      "Properties": {
+        "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
+        "PolicyDocument" : {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [ "s3:ListAllMyBuckets" ],
+              "Resource": "arn:aws:s3:::*" },
+            {
+              "Effect": "Allow",
+              "Action": [ "s3:ListBucket", "s3:GetBucketLocation" ],
+              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" } ] ] }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [ "s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
+              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" }, "/*" ] ] }
+            }
+          ]
+        },
+        "Groups" : [
+          { "Ref": "ReadWriteDeleteGroupName" }
+        ]
+      }
+    },
+
+    "ManagedPolicyS3Read": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn": ["S3Bucket"],
+      "Properties": {
+        "Description": "Managed Policy for accessing S3 bucket (read only)",
+        "PolicyDocument" : {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": ["s3:ListAllMyBuckets"],
+              "Resource": "arn:aws:s3:::*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["s3:GetObject"],
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]]}
+            }
+          ]
+        },
+        "Groups" : [
+          { "Ref": "ReadGroupName" }
+        ]
+      }
+    }
+  }
+}

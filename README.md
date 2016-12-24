@@ -25,22 +25,18 @@ Some AWS CloudFormation templates for personal use.
     - Create SecurityGroup for EC2 instances (Windows)
     - Create SecurityGroup for VPN
 
-3. `EC2-OpenVPN.template`
-    - Create an EC2 instance from an AMI of an openvpn instance.
-    - Create an Elastic IP, attached to the EC2 instance.
-
-4. `EC2-Basic.template`
+3. `EC2-Basic.template`
     - Create an EC2 instance from an AMI.
     - Create an Elastic IP, attached to the EC2 instance.
 
-## Templates for S3 Static Website Hosting
+4. `EC2-OpenVPN.template`
+    - Create an EC2 instance from an AMI of an openvpn instance.
+    - Create an Elastic IP, attached to the EC2 instance.
 
-1. `S3-StaticWebsiteHosting.template`
-    - Create S3 bucket with Static Website, Versioning and Logging enabled.
-    - Create S3 bucket for logging.
-    - Create Bucket Policy for PublicRead access.
-    - Create a Managed Policy for managing and uploading files to the S3 bucket.
-    - Attach the Managed Policy to the given Group.
+## Templates for Lambda function management
+
+1. `Lambda-CreateUpdatePolicies.template`
+    - Create Managed Policy for creating and updating Lambda function.
 
 ## Templates for S3 management
 
@@ -57,6 +53,19 @@ Some AWS CloudFormation templates for personal use.
     - Attach the Read-Write-Delete Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
     - Create a Managed Policy giving Read-only access to the S3 bucket.
     - Attach the Read-only Managed Policy to the given Group of `ReadGroupName`.
+
+3. `UserGroup.template`
+    - Create a Group and add the specified users to the group.
+
+
+## Templates for S3 Static Website Hosting
+
+1. `S3-StaticWebsiteHosting.template`
+    - Create S3 bucket with Static Website, Versioning and Logging enabled.
+    - Create S3 bucket for logging.
+    - Create Bucket Policy for PublicRead access.
+    - Create a Managed Policy for managing and uploading files to the S3 bucket.
+    - Attach the Managed Policy to the given Group.
 
 ## Templates for Logging and Reporting 
 

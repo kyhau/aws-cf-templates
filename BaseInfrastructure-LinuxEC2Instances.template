@@ -6,15 +6,15 @@
   "Parameters" : {
     "NewProjectTag" : {
       "Type" : "String",
-      "Description" : "Project tag to be used for tagging related sources (e.g. 60-1-training).",
-      "Default": "60-1-training"
+      "Description" : "Project tag to be used for tagging related sources (e.g. 61-11-xxxx).",
+      "Default": "61-11-xxxx"
     },
     "NewVpcCIDRFirst2Parts" : {
       "Type" : "String",
-      "Description" : "The first 2 parts of the CIDR (e.g. 61.10) to be assigned to the VPC.",
+      "Description" : "The first 2 parts of the CIDR (e.g. 61.11) to be assigned to the VPC.",
       "MinLength": "3",
       "MaxLength": "7",
-      "Default": "60.1",
+      "Default": "61.11",
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
       "ConstraintDescription": "must be in the form x.x"
     },
@@ -22,24 +22,6 @@
       "Type" : "String",
       "Description" : "The Availability Zone of the default subnet.",
       "Default": "ap-southeast-2a"
-    },
-    "OfficeMelbourneCIDR" : {
-      "Type" : "String",
-      "Description" : "IP Address range for connecting from Melbourne office.",
-      "MinLength": "9",
-      "MaxLength": "18",
-      "Default": "203.87.3.106/32",
-      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
-      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
-    },
-    "OfficeBrisbaneCIDR" : {
-      "Type" : "String",
-      "Description" : "IP Address range for the connecting from Brisbane office.",
-      "MinLength": "9",
-      "MaxLength": "18",
-      "Default": "220.244.67.214/32",
-      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
-      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
     }
   },
 
@@ -187,8 +169,6 @@
         "VpcId": { "Ref": "ProjectVpc" },
         "GroupDescription": { "Ref": "NewProjectTag" },
         "SecurityGroupIngress": [
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Ref": "OfficeMelbourneCIDR" } },
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Ref": "OfficeBrisbaneCIDR" } },
           { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/16"]]} }
         ],
         "SecurityGroupEgress": [
@@ -218,7 +198,6 @@
         "SecurityGroupIngress": [
           { "IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp":  "203.87.3.106/32" },
           { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/20"]]} },
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "943", "ToPort": "943", "CidrIp": "0.0.0.0/0" }

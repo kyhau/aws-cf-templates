@@ -208,7 +208,7 @@
         "SecurityGroupIngress": [
           { "IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
-\          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/20"]]} },
+          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/20"]]} },
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "943", "ToPort": "943", "CidrIp": "0.0.0.0/0" }
         ],

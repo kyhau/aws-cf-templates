@@ -13,23 +13,23 @@ Some AWS CloudFormation templates for personal use.
             - tcp 4506 0.0.0.0/0  salt-master ret-port
     - Create SecurityGroup for VPN
 
-2. `BaseInfrastructure-LinuxEC2Instances.template`
+1. `BaseInfrastructure-LinuxEC2Instances.template`
     - Create VPC
     - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
     - Create SecurityGroup for EC2 instances (Linux)
     - Create SecurityGroup for VPN
 
-2. `BaseInfrastructure-WinEC2Instances.template`
+1. `BaseInfrastructure-WinEC2Instances.template`
     - Create VPC
     - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
     - Create SecurityGroup for EC2 instances (Windows)
     - Create SecurityGroup for VPN
 
-3. `EC2-Basic.template`
+1. `EC2-Basic.template`
     - Create an EC2 instance from an AMI.
     - Create an Elastic IP, attached to the EC2 instance.
 
-4. `EC2-OpenVPN.template`
+1. `EC2-OpenVPN.template`
     - Create an EC2 instance from an AMI of an openvpn instance.
     - Create an Elastic IP, attached to the EC2 instance.
 
@@ -46,7 +46,7 @@ Some AWS CloudFormation templates for personal use.
     - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
     - Attach the Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
 
-2. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
+1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
     - Create a S3 bucket with versioning and logging enabled.
     - Create a S3 bucket for logging.
     - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
@@ -54,7 +54,7 @@ Some AWS CloudFormation templates for personal use.
     - Create a Managed Policy giving Read-only access to the S3 bucket.
     - Attach the Read-only Managed Policy to the given Group of `ReadGroupName`.
 
-3. `UserGroup.template`
+1. `UserGroup.template`
     - Create a Group and add the specified users to the group.
 
 
@@ -72,6 +72,13 @@ Some AWS CloudFormation templates for personal use.
 1. `CloudTrail.template`
     - Create CloudTrail resources and attach policies to the publish-user and devops-user
 
-2. `CloudWatch-Alarms-for-CloudTrail-API-Activity.template`
+1. `CloudWatch-Alarms-for-CloudTrail-API-Activity.template`
     - AWS CloudTrail API Activity Alarm Template for CloudWatch Logs
     - Original [Source](https://s3-us-west-2.amazonaws.com/awscloudtrail/cloudwatch-alarms-for-cloudtrail-api-activity/CloudWatch_Alarms_for_CloudTrail_API_Activity.json) from Amazon.
+
+## Templates for Polly 
+
+1. `Polly-Dev-GroupAndPolicy.template`
+    - Create a Group and Managed Policy to use Amazon Polly.
+    - Create a Managed Policy allowing all actions except deleting Lexicon.
+    - Attach the Managed Policy to the given Group of `PollyDevGroupName`.

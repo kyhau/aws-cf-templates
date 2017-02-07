@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Create S3 bucket with versioning/logging enabled, a Read-Write-Delete managed policy attached, and a Read-Only managed policy attached.",
+  "Description": "Create S3 bucket with versioning/logging enabled and a Read-Write-Delete managed policy attached.",
 
   "Parameters" : {
     "BucketName" : {
@@ -11,14 +11,17 @@
     "ReadWriteDeleteGroupName" : {
       "Description" : "Name of the Group to be given Read-Write-Delete access to the given bucket.",
       "Type" : "String"
-    },
-    "ReadGroupName" : {
-      "Description" : "Name of the Group to be given Read-only access to the given bucket.",
-      "Type" : "String"
     }
   },
 
   "Resources": {
+    "IamGroup": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
+      }
+    },
+
     "S3BucketLogs": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -44,7 +47,7 @@
 
     "ManagedPolicyS3ReadWriteDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket"],
+      "DependsOn": ["S3Bucket", "IamGroup"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument" : {
@@ -68,40 +71,6 @@
         },
         "Groups" : [
           { "Ref": "ReadWriteDeleteGroupName" }
-        ]
-      }
-    },
-
-    "ManagedPolicyS3Read": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket"],
-      "Properties": {
-        "Description": "Managed Policy for accessing S3 bucket (read only)",
-        "PolicyDocument" : {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": ["s3:ListAllMyBuckets"],
-              "Resource": "arn:aws:s3:::*"
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "s3:ListBucket",
-                "s3:GetBucketLocation"
-              ],
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}]]}
-            },
-            {
-              "Effect": "Allow",
-              "Action": ["s3:GetObject"],
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]]}
-            }
-          ]
-        },
-        "Groups" : [
-          { "Ref": "ReadGroupName" }
         ]
       }
     }

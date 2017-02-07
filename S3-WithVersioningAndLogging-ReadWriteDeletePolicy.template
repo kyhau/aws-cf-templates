@@ -15,6 +15,13 @@
   },
 
   "Resources": {
+    "IamGroup": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
+      }
+    },
+
     "S3BucketLogs": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -40,7 +47,7 @@
 
     "ManagedPolicyS3ReadWriteDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket"],
+      "DependsOn": ["S3Bucket", "IamGroup"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument" : {

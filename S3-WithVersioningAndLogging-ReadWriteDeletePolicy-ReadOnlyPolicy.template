@@ -19,6 +19,20 @@
   },
 
   "Resources": {
+    "IamGroupRWD": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
+      }
+    },
+    "IamGroupRead": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": {"Ref": "ReadGroupName"}
+      }
+    },
+
+
     "S3BucketLogs": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -44,7 +58,7 @@
 
     "ManagedPolicyS3ReadWriteDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket"],
+      "DependsOn": ["S3Bucket", "IamGroupRWD"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument" : {
@@ -74,7 +88,7 @@
 
     "ManagedPolicyS3Read": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket"],
+      "DependsOn": ["S3Bucket", "IamGroupRead"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read only)",
         "PolicyDocument" : {

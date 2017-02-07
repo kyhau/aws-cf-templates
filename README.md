@@ -2,7 +2,7 @@
 
 Some AWS CloudFormation templates for personal use.
 
-## Templates for creating some aws resources
+## Templates for creating some EC2 and VPC aws resources
 
 1. `BaseInfrastructure-Linux-SaltMaster.template`
     - Create VPC (at Sydney)
@@ -41,12 +41,15 @@ Some AWS CloudFormation templates for personal use.
 ## Templates for S3 management
 
 1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy.template`
+    - Create an IAM Group to be given Read-Write-Delete access to the S3 bucket.
     - Create a S3 bucket with versioning and logging enabled.
     - Create a S3 bucket for logging.
     - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
     - Attach the Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
 
 1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
+    - Create an IAM Group to be given Read-Write-Delete access to the S3 bucket.
+    - Create an IAM Group to be given Read access to the S3 bucket.
     - Create a S3 bucket with versioning and logging enabled.
     - Create a S3 bucket for logging.
     - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
@@ -57,7 +60,6 @@ Some AWS CloudFormation templates for personal use.
 1. `UserGroup.template`
     - Create a Group and add the specified users to the group.
 
-
 ## Templates for S3 Static Website Hosting
 
 1. `S3-StaticWebsiteHosting.template`
@@ -66,6 +68,14 @@ Some AWS CloudFormation templates for personal use.
     - Create Bucket Policy for PublicRead access.
     - Create a Managed Policy for managing and uploading files to the S3 bucket.
     - Attach the Managed Policy to the given Group.
+
+## Templates for Inspector SNS
+
+1. `Inspector-SNS.template`
+   - Create a SNS topic with the specified name.
+   - Create a SNS subscription with the specified email address for the Inspector finding subscription.
+   - Create Topic Policies for the Inspector to publish message. Inspector of different region has different ARN.
+     See [Setting Up an SNS Topic for Amazon Inspector Notifications](https://docs.aws.amazon.com/inspector/latest/userguide/inspector_assessments.html#sns-topic).
 
 ## Templates for Logging and Reporting 
 

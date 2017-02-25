@@ -79,8 +79,12 @@ Some AWS CloudFormation templates for personal use.
 
 ## Templates for Logging and Reporting 
 
-1. `CloudTrail.template`
-    - Create CloudTrail resources and attach policies to the publish-user and devops-user
+1. `CloudTrail-S3-SNS.template`
+    - Create an AWS CloudTrail trail capturing AWS API calls made by your AWS account.
+    - Create a S3 bucket and a Bucket Policy
+    - Create a SNS Topic and a Topic Policy
+    - See [User Guide: aws-resource-cloudtrail-trail](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudtrail-trail.html)
+    - See [User Guide: create-s3-bucket-policy-for-cloudtrail.html#troubleshooting](http://docs.aws.amazon.com/awscloudtrail/latest/userguide/create-s3-bucket-policy-for-cloudtrail.html#troubleshooting)
 
 1. `CloudWatch-Alarms-for-CloudTrail-API-Activity.template`
     - AWS CloudTrail API Activity Alarm Template for CloudWatch Logs

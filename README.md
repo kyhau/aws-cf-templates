@@ -83,11 +83,14 @@ Some AWS CloudFormation templates for personal use.
     - Create an AWS CloudTrail trail capturing AWS API calls made by your AWS account.
     - Create a S3 bucket and a Bucket Policy
     - Create a SNS Topic and a Topic Policy
+    - This template is useful for resource reporting (e.g. EC2 uptimes, etc)
     - See [User Guide: aws-resource-cloudtrail-trail](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudtrail-trail.html)
     - See [User Guide: create-s3-bucket-policy-for-cloudtrail.html#troubleshooting](http://docs.aws.amazon.com/awscloudtrail/latest/userguide/create-s3-bucket-policy-for-cloudtrail.html#troubleshooting)
 
 1. `CloudWatch-Alarms-for-CloudTrail-API-Activity.template`
     - AWS CloudTrail API Activity Alarm Template for CloudWatch Logs
+    - Define metric filters that monitor creation and deletion of, or updates to, security groups, network ACLs, internet gateways, Amazon EC2 instances, and IAM policies. For each filter, the template describes a corresponding alarm that enables to you to receive email notifications when a call to one of the APIs being monitored by the filter is made.
+    - By default, most of the filters in the template trigger an alarm when one monitored event occurs within a five-minute period. You can modify these alarm thresholds for your own requirements. For example, you could monitor for 3 events in a 10-minute period. 
     - Original [Source](https://s3-us-west-2.amazonaws.com/awscloudtrail/cloudwatch-alarms-for-cloudtrail-api-activity/CloudWatch_Alarms_for_CloudTrail_API_Activity.json) from Amazon.
 
 ## Templates for Polly 

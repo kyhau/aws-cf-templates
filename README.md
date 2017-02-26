@@ -40,22 +40,14 @@ Some AWS CloudFormation templates for personal use.
 
 ## Templates for S3 management
 
-1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy.template`
-    - Create an IAM Group to be given Read-Write-Delete access to the S3 bucket.
-    - Create a S3 bucket with versioning and logging enabled.
+1. `BN-S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
+    - Create a S3 bucket with logging enabled.
     - Create a S3 bucket for logging.
-    - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
-    - Attach the Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
-
-1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
-    - Create an IAM Group to be given Read-Write-Delete access to the S3 bucket.
-    - Create an IAM Group to be given Read access to the S3 bucket.
-    - Create a S3 bucket with versioning and logging enabled.
-    - Create a S3 bucket for logging.
-    - Create a Managed Policy giving Read-Write-Delete access to the S3 bucket.
-    - Attach the Read-Write-Delete Managed Policy to the given Group of `ReadWriteDeleteGroupName`.
-    - Create a Managed Policy giving Read-only access to the S3 bucket.
-    - Attach the Read-only Managed Policy to the given Group of `ReadGroupName`.
+    - Enable versioning if `EnableVersioning` set to `Enabled`.
+    - Optional - If `ReadWriteDeleteGroupName` is specified, create also an IAM Group and a Managed Policy giving
+      Read-Write-Delete access to the S3 bucket.
+    - Optional - If `ReadOnlyGroupName` is specified, create also an IAM Group and a Managed Policy giving
+      Read-only access to the S3 bucket.
 
 1. `UserGroup.template`
     - Create a Group and add the specified users to the group.

@@ -1,37 +1,38 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Create S3 bucket with versioning/logging enabled, a Read-Write-Delete managed policy attached, and a Read-Only managed policy attached.",
+  "Description": "Create S3 bucket with logging enabled (also optionally enable versioning, create managed policies for Read-Only and Read-Write-Delete accesses).",
 
   "Parameters" : {
     "BucketName" : {
       "Type" : "String",
-      "Description" : "The name of the S3 bucket to be created with the managed policies attached."
+      "Description" : "The name of the S3 bucket to be created."
+    },
+    "EnableVersioning" : {
+      "Description" : "Enable versioning (Enabled or Suspended).",
+      "Type" : "String",
+      "AllowedValues": ["Enabled", "Suspended"],
+      "Default": "Enabled"
+    },
+    "ReadOnlyGroupName" : {
+      "Description" : "Optional. Name of the Group to be given Read-only access to the given bucket.",
+      "Type" : "String",
+      "Default":""
     },
     "ReadWriteDeleteGroupName" : {
-      "Description" : "Name of the Group to be given Read-Write-Delete access to the given bucket.",
-      "Type" : "String"
-    },
-    "ReadGroupName" : {
-      "Description" : "Name of the Group to be given Read-only access to the given bucket.",
-      "Type" : "String"
+      "Description" : "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
+      "Type" : "String",
+      "Default":""
     }
   },
 
-  "Resources": {
-    "IamGroupRWD": {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
-      }
-    },
-    "IamGroupRead": {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": {"Ref": "ReadGroupName"}
-      }
-    },
+  "Conditions" : {
+    "VersioningEnabled" : {"Fn::Equals" : ["Enabled", {"Ref" : "EnableVersioning"}]},
+    "ReadOnlyGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadOnlyGroupName"}]}]},
+    "ReadWriteDeleteGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadWriteDeleteGroupName"}]}]}
+  },
 
+  "Resources": {
 
     "S3BucketLogs": {
       "Type": "AWS::S3::Bucket",
@@ -51,14 +52,22 @@
         "LoggingConfiguration": {
           "DestinationBucketName": { "Ref": "S3BucketLogs" }
         },
-        "VersioningConfiguration": { "Status": "Enabled" }
+        "VersioningConfiguration": { "Status": {"Ref": "EnableVersioning"} }
       },
       "DeletionPolicy": "Retain"
     },
 
+    "IamGroupReadWriteDelete": {
+      "Type": "AWS::IAM::Group",
+      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "Properties": {
+        "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
+      }
+    },
     "ManagedPolicyS3ReadWriteDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket", "IamGroupRWD"],
+      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "DependsOn": ["S3Bucket", "IamGroupReadWriteDelete"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument" : {
@@ -86,9 +95,17 @@
       }
     },
 
+    "IamGroupReadOnly": {
+      "Type": "AWS::IAM::Group",
+      "Condition" : "ReadOnlyGroupNameSpecified",
+      "Properties": {
+        "GroupName": {"Ref": "ReadOnlyGroupName"}
+      }
+    },
     "ManagedPolicyS3Read": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket", "IamGroupRead"],
+      "Condition" : "ReadOnlyGroupNameSpecified",
+      "DependsOn": ["S3Bucket", "IamGroupReadOnly"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read only)",
         "PolicyDocument" : {
@@ -115,7 +132,7 @@
           ]
         },
         "Groups" : [
-          { "Ref": "ReadGroupName" }
+          { "Ref": "ReadOnlyGroupName" }
         ]
       }
     }

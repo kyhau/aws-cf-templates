@@ -91,7 +91,8 @@ Some AWS CloudFormation templates for personal use.
     - AWS CloudTrail API Activity Alarm Template for CloudWatch Logs
     - Define metric filters that monitor creation and deletion of, or updates to, security groups, network ACLs, internet gateways, Amazon EC2 instances, and IAM policies. For each filter, the template describes a corresponding alarm that enables to you to receive email notifications when a call to one of the APIs being monitored by the filter is made.
     - By default, most of the filters in the template trigger an alarm when one monitored event occurs within a five-minute period. You can modify these alarm thresholds for your own requirements. For example, you could monitor for 3 events in a 10-minute period. 
-    - Original [Source](https://s3-us-west-2.amazonaws.com/awscloudtrail/cloudwatch-alarms-for-cloudtrail-api-activity/CloudWatch_Alarms_for_CloudTrail_API_Activity.json) from Amazon.
+    - Create also the LogGroup
+    - Modified from Original [Source](https://s3-us-west-2.amazonaws.com/awscloudtrail/cloudwatch-alarms-for-cloudtrail-api-activity/CloudWatch_Alarms_for_CloudTrail_API_Activity.json) from Amazon.
 
 ## Templates for Polly 
 

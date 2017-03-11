@@ -1,6 +1,13 @@
 # AWS-CF-Templates
 
+[![Build Status](https://travis-ci.org/kyhau/aws-cf-templates.svg?branch=master)](https://travis-ci.org/kyhau/aws-cf-templates)
+
 Some AWS CloudFormation templates for personal use.
+
+## Scripts to manage templates
+
+1. `deploy_to_s3.sh`
+    - Deploy the latest templates to the specified S3 bucket.
 
 ## Templates for creating some EC2 and VPC aws resources
 

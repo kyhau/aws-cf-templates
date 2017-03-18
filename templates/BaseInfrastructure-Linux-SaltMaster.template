@@ -3,22 +3,22 @@
 
   "Description": "Create base infrastructure for a salt-master server at Sydney (including VPC, security groups for EC2s and VPN).",
 
-  "Parameters" : {
-    "NewProjectTag" : {
-      "Type" : "String",
-      "Description" : "New tag to be used for tagging related sources.",
+  "Parameters": {
+    "NewProjectTag": {
+      "Type": "String",
+      "Description": "New tag to be used for tagging related sources."
     },
-    "NewVpcCIDRFirst2Parts" : {
-      "Type" : "String",
-      "Description" : "The first 2 parts of the CIDR (e.g. 61.10) to be assigned to the VPC.",
+    "VpcCidrFirst2Parts": {
+      "Type": "String",
+      "Description": "The first 2 parts of the CIDR (e.g. 61.10) to be assigned to the VPC.",
       "MinLength": "3",
       "MaxLength": "7",
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
       "ConstraintDescription": "must be in the form x.x"
     },
-    "NewVpcSubnetZone" : {
-      "Type" : "String",
-      "Description" : "The Availability Zone of the default subnet.",
+    "VpcSubnetZone": {
+      "Type": "AWS::EC2::AvailabilityZone::Name",
+      "Description": "The Availability Zone of the default subnet.",
       "Default": "ap-southeast-2a"
     }
   },
@@ -28,7 +28,7 @@
     "ProjectVpc": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
-        "CidrBlock": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/16"]]},
+        "CidrBlock": { "Fn::Join": ["", [{"Ref": "VpcCidrFirst2Parts"}, ".0.0/16"]]},
         "InstanceTenancy": "default",
         "EnableDnsSupport": "true",
         "EnableDnsHostnames": "true",
@@ -44,12 +44,12 @@
       "Type": "AWS::EC2::Subnet",
       "DependsOn": ["ProjectVpc"],
       "Properties": {
-        "CidrBlock": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/20"]]},
-        "AvailabilityZone": { "Ref": "NewVpcSubnetZone" },
+        "CidrBlock": { "Fn::Join": ["", [{"Ref": "VpcCidrFirst2Parts"}, ".0.0/20"]]},
+        "AvailabilityZone": { "Ref": "VpcSubnetZone" },
         "VpcId": { "Ref": "ProjectVpc" },
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Fn::Join" : ["-", [{"Ref" : "NewProjectTag"}, {"Ref" : "NewVpcSubnetZone"}]]} },
+          { "Key": "Name", "Value": { "Fn::Join": ["-", [{"Ref": "NewProjectTag"}, {"Ref": "VpcSubnetZone"}]]} },
           { "Key": "Network", "Value": "Public" }
         ]
       }
@@ -88,7 +88,7 @@
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
           { "Key": "Name", "Value": { "Ref": "NewProjectTag" } }
         ],
-        "DomainName": { "Fn::Join" : ["", [{"Ref" : "AWS::Region"}, ".compute.internal"]]},
+        "DomainName": { "Fn::Join": ["", [{"Ref": "AWS::Region"}, ".compute.internal"]]},
         "DomainNameServers": [ "AmazonProvidedDNS" ]
       }
     },
@@ -155,7 +155,6 @@
       }
     },
 
-
     "ProjectSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "DependsOn": ["ProjectRouteTable", "ProjectSubnetA"],
@@ -165,7 +164,6 @@
       }
     },
 
-
     "VMSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
@@ -174,19 +172,20 @@
         "SecurityGroupIngress": [
           { "IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/16"]]} },
+          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join": ["", [{"Ref": "VpcCidrFirst2Parts"}, ".0.0/16"]]} },
           { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "4505", "ToPort": "4505", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "4506", "ToPort": "4505", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "5432", "ToPort": "5432", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/16"]]} }
+          { "IpProtocol": "tcp", "FromPort": "5432", "ToPort": "5432", "CidrIp": { "Fn::Join": ["", [{"Ref": "VpcCidrFirst2Parts"}, ".0.0/16"]]} }
         ],
         "SecurityGroupEgress": [
           { "IpProtocol": "-1", "CidrIp": "0.0.0.0/0" }
         ],
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Ref": "NewProjectTag" } }
+          { "Key": "Name",  "Value": { "Ref": "NewProjectTag" } },
+          { "Key": "Service", "Value": "salt-master" }
         ]
       }
     },
@@ -208,7 +207,7 @@
         "SecurityGroupIngress": [
           { "IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join" : ["", [{"Ref" : "NewVpcCIDRFirst2Parts"}, ".0.0/20"]]} },
+          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join": ["", [{"Ref": "VpcCidrFirst2Parts"}, ".0.0/20"]]} },
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "943", "ToPort": "943", "CidrIp": "0.0.0.0/0" }
         ],
@@ -217,7 +216,8 @@
         ],
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Fn::Join" : ["-", ["openvpn", {"Ref" : "NewProjectTag"}]]} }
+          { "Key": "Name",  "Value": { "Fn::Join": ["-", ["openvpn", {"Ref": "NewProjectTag"}]]} },
+          { "Key": "Service", "Value": "openvpn" }
         ]
       }
     }

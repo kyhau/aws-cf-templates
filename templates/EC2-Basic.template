@@ -61,7 +61,7 @@
       "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
     "SaltMasterHost": {
-      "Description": "Optional. Hostname (or pirvate IP) of the Salt Master.",
+      "Description": "Optional. Hostname (or private IP) of the Salt Master.",
       "Type": "String",
       "Default": ""
     },

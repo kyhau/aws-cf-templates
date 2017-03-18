@@ -3,31 +3,31 @@
 
   "Description": "Create S3 bucket with logging enabled (also optionally enable versioning, create managed policies for Read-Only and Read-Write-Delete accesses).",
 
-  "Parameters" : {
-    "BucketName" : {
-      "Type" : "String",
-      "Description" : "The name of the S3 bucket to be created."
+  "Parameters": {
+    "BucketName": {
+      "Type": "String",
+      "Description": "The name of the S3 bucket to be created."
     },
-    "EnableVersioning" : {
-      "Description" : "Enable versioning (Enabled or Suspended).",
-      "Type" : "String",
+    "EnableVersioning": {
+      "Description": "Enable versioning (Enabled or Suspended).",
+      "Type": "String",
       "AllowedValues": ["Enabled", "Suspended"],
       "Default": "Enabled"
     },
-    "ReadOnlyGroupName" : {
-      "Description" : "Optional. Name of the Group to be given Read-only access to the given bucket.",
-      "Type" : "String",
+    "ReadOnlyGroupName": {
+      "Description": "Optional. Name of the Group to be given Read-only access to the given bucket.",
+      "Type": "String",
       "Default":""
     },
-    "ReadWriteDeleteGroupName" : {
-      "Description" : "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
-      "Type" : "String",
+    "ReadWriteDeleteGroupName": {
+      "Description": "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
+      "Type": "String",
       "Default":""
     }
   },
 
-  "Conditions" : {
-    "VersioningEnabled" : {"Fn::Equals" : ["Enabled", {"Ref" : "EnableVersioning"}]},
+  "Conditions": {
+    "VersioningEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableVersioning"}]},
     "ReadOnlyGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadOnlyGroupName"}]}]},
     "ReadWriteDeleteGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadWriteDeleteGroupName"}]}]}
   },
@@ -38,7 +38,7 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "AccessControl": "LogDeliveryWrite",
-        "BucketName": { "Fn::Join" : ["-", [{"Ref" : "BucketName"}, "logs"]]},
+        "BucketName": { "Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
         "VersioningConfiguration": { "Status": "Suspended" }
       }
     },
@@ -47,7 +47,7 @@
       "Type": "AWS::S3::Bucket",
       "DependsOn": ["S3BucketLogs"],
       "Properties": {
-        "BucketName" : {"Ref":"BucketName"},
+        "BucketName": {"Ref":"BucketName"},
         "AccessControl": "BucketOwnerFullControl",
         "LoggingConfiguration": {
           "DestinationBucketName": { "Ref": "S3BucketLogs" }
@@ -59,18 +59,18 @@
 
     "IamGroupReadWriteDelete": {
       "Type": "AWS::IAM::Group",
-      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "Condition": "ReadWriteDeleteGroupNameSpecified",
       "Properties": {
         "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
       }
     },
     "ManagedPolicyS3ReadWriteDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "Condition": "ReadWriteDeleteGroupNameSpecified",
       "DependsOn": ["S3Bucket", "IamGroupReadWriteDelete"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
-        "PolicyDocument" : {
+        "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
@@ -89,7 +89,7 @@
             }
           ]
         },
-        "Groups" : [
+        "Groups": [
           { "Ref": "ReadWriteDeleteGroupName" }
         ]
       }
@@ -97,18 +97,18 @@
 
     "IamGroupReadOnly": {
       "Type": "AWS::IAM::Group",
-      "Condition" : "ReadOnlyGroupNameSpecified",
+      "Condition": "ReadOnlyGroupNameSpecified",
       "Properties": {
         "GroupName": {"Ref": "ReadOnlyGroupName"}
       }
     },
     "ManagedPolicyS3Read": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "Condition" : "ReadOnlyGroupNameSpecified",
+      "Condition": "ReadOnlyGroupNameSpecified",
       "DependsOn": ["S3Bucket", "IamGroupReadOnly"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read only)",
-        "PolicyDocument" : {
+        "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
@@ -131,7 +131,7 @@
             }
           ]
         },
-        "Groups" : [
+        "Groups": [
           { "Ref": "ReadOnlyGroupName" }
         ]
       }

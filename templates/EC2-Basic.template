@@ -39,6 +39,11 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
+    "SaltMasterHost": {
+      "Description": "Optional. Hostname (or pirvate IP) of the Salt Master.",
+      "Type": "String",
+      "Default": ""
+    },
     "ServiceTag": {
       "Description": "Value of the tag Service",
       "Type": "String",
@@ -46,6 +51,10 @@
       "AllowedValues": ["vm", "openvpn"],
       "ConstraintDescription": "must be a predefined Tag."
     }
+  },
+
+  "Conditions": {
+    "SaltMasterHostSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltMasterHost"}]}]}
   },
 
   "Resources": {

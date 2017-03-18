@@ -8,6 +8,10 @@
       "Description": "EC2 Name.",
       "Type": "String"
     },
+    "EC2HostName": {
+      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname.",
+      "Type": "String"
+    },
     "AMI": {
       "Description": "The AMI ID of the image that the EC2 instance to be created from.",
       "Type": "String"
@@ -66,7 +70,9 @@
   "Resources": {
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
-      "Metadata": { "Comment": "EC2" },
+      "Metadata": {
+        "Comment": "EC2"
+      },
       "Properties": {
         "DisableApiTermination": "false",
         "InstanceInitiatedShutdownBehavior": "stop",
@@ -75,6 +81,13 @@
         "IamInstanceProfile": { "Ref": "InstanceRole" },
         "KeyName": { "Ref": "KeyName" },
         "Monitoring": "false",
+        "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -xe\n",
+          "sudo hostname ", { "Ref" : "EC2HostName" }, "\n",
+          "sed -i '1i 127.0.0.1 ", { "Ref" : "EC2HostName" }, " ' /etc/hosts\n",
+          "echo ", { "Ref" : "EC2HostName" }, " > /etc/hostname\n",
+          "hostname -F /etc/hostname"
+        ]]}},
         "NetworkInterfaces": [{
           "AssociatePublicIpAddress": "true",
           "DeleteOnTermination": "true",

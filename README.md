@@ -1,9 +1,12 @@
 # AWS-CF-Templates
 
+[![Build Status](https://travis-ci.org/kyhau/aws-cf-templates.svg?branch=master)](https://travis-ci.org/kyhau/aws-cf-templates)
+
 Some AWS CloudFormation templates for personal use.
 
 ##### Table of Contents
 
+- [Scripts to manage templates](#scripts-to-manage-templates)
 - [Templates for creating EC2 and VPC aws resources](#templates-for-creating-ec2-and-vpc-aws-resources)
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
 - [Templates for S3 management](#templates-for-s3-management)
@@ -11,6 +14,11 @@ Some AWS CloudFormation templates for personal use.
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
 - [Templates for Logging and Reporting](#templates-for-logging-and-reporting)
+
+## Scripts to manage templates
+
+1. `deploy_to_s3.sh`
+    - Deploy the latest templates to the specified S3 bucket.
 
 ## Templates for creating EC2 and VPC aws resources
 

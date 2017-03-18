@@ -13,15 +13,27 @@
       "Description" : "The file name of the index document.",
       "Default": "index.html"
     },
+    "EnableVersioning" : {
+      "Description" : "Enable versioning (Enabled or Suspended).",
+      "Type" : "String",
+      "AllowedValues": ["Enabled", "Suspended"],
+      "Default": "Enabled"
+    },
     "ErrorDoc" : {
       "Type" : "String",
       "Description" : "The file name of the error document.",
       "Default": "error.html"
     },
     "ReadWriteDeleteGroupName" : {
-      "Description" : "Name of the Group for Users to access and manage the S3 bucket.",
-      "Type" : "String"
+      "Description" : "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
+      "Type" : "String",
+      "Default":""
     }
+  },
+
+  "Conditions" : {
+    "VersioningEnabled" : {"Fn::Equals" : ["Enabled", {"Ref" : "EnableVersioning"}]},
+    "ReadWriteDeleteGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadWriteDeleteGroupName"}]}]}
   },
 
   "Resources": {
@@ -47,7 +59,7 @@
         "LoggingConfiguration": {
           "DestinationBucketName": { "Ref": "S3BucketLogs" }
         },
-        "VersioningConfiguration": { "Status": "Enabled" }
+        "VersioningConfiguration": { "Status": {"Ref": "EnableVersioning"} }
       },
       "DeletionPolicy": "Retain"
     },
@@ -71,9 +83,17 @@
       }
     },
 
+    "IamGroupReadWriteDelete": {
+      "Type": "AWS::IAM::Group",
+      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "Properties": {
+        "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
+      }
+    },
     "ManagedPolicyS3": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn": ["S3Bucket"],
+      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "DependsOn": ["S3Bucket", "IamGroupReadWriteDelete"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument" : {

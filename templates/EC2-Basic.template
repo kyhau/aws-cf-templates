@@ -9,7 +9,7 @@
       "Type": "String"
     },
     "EC2HostName": {
-      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname.",
+      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname).",
       "Type": "String"
     },
     "AMI": {

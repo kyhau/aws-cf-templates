@@ -4,6 +4,17 @@
 
 Some AWS CloudFormation templates for personal use.
 
+##### [UNLICENSE](LICENSE)
+
+> The templates are provided "AS IS", without warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose and non infringement. In no event shall the
+authors be liable for any claim, damages or other liability, whether in an
+action of contract, tort or otherwise, arising from, out of or in connection
+with the software or the use or other dealings in the software.
+
+
+
 ##### Table of Contents
 
 - [Scripts to manage templates](#scripts-to-manage-templates)
@@ -11,6 +22,7 @@ Some AWS CloudFormation templates for personal use.
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
 - [Templates for S3 management](#templates-for-s3-management)
 - [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
+- [Templates for RDS](#templates-for-rds)
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
 - [Templates for Logging and Reporting](#templates-for-logging-and-reporting)
@@ -92,6 +104,14 @@ Some AWS CloudFormation templates for personal use.
 
 1. `RDS-SecurityGroup.template`
     - Create RDS Security Group.
+
+## Templates for DynamoDB
+
+1. `DynamoDB-Table.template`
+    - Create a DynamoDB Table.
+
+1. `DynamoDB-Policy.template`
+    - Create a managed policy for using and managing a DynamoDB table.
 
 ## Templates for Polly 
 

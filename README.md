@@ -2,7 +2,17 @@
 
 Some AWS CloudFormation templates for personal use.
 
-## Templates for creating some EC2 and VPC aws resources
+##### Table of Contents
+
+- [Templates for creating EC2 and VPC aws resources](#templates-for-creating-ec2-and-vpc-aws-resources)
+- [Templates for Lambda function management](#templates-for-lambda-function-management)
+- [Templates for S3 management](#templates-for-s3-management)
+- [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
+- [Templates for Polly](#templates-for-polly)
+- [Templates for Inspector SNS](#templates-for-inspector-sns)
+- [Templates for Logging and Reporting](#templates-for-logging-and-reporting)
+
+## Templates for creating EC2 and VPC aws resources
 
 1. `BaseInfrastructure-Linux-SaltMaster.template`
     - Create VPC (at Sydney)
@@ -29,9 +39,15 @@ Some AWS CloudFormation templates for personal use.
     - Create an EC2 instance from an AMI.
     - Create an Elastic IP, attached to the EC2 instance.
 
-1. `EC2-OpenVPN.template`
-    - Create an EC2 instance from an AMI of an openvpn instance.
+1. `EC2-and-SecurityGroup-support-NFS-Rabbitmq.template`
+    - Create an EC2 instance with an additional volume and Security Group supporting NFS and Rabbitmq ports.
+    - Create an additional EBS and attached to the EC2 instance.
+    - Create SecurityGroup for EC2 instances (Linux)
+        - Special inbound rules
+            - tcp 2049 NFS-port
+            - tcp 5672 Rabbitmq-port 
     - Create an Elastic IP, attached to the EC2 instance.
+
 
 ## Templates for Lambda function management
 
@@ -61,6 +77,21 @@ Some AWS CloudFormation templates for personal use.
     - Create a Managed Policy for managing and uploading files to the S3 bucket.
     - Attach the Managed Policy to the given Group.
 
+## Templates for RDS
+
+1. `RDS-PostgreSQL.template`
+    - Create RDS PostgreSQL with PostGIS instance and a Read-Write managed policy attached.
+
+1. `RDS-SecurityGroup.template`
+    - Create RDS Security Group.
+
+## Templates for Polly 
+
+1. `Polly-Dev-GroupAndPolicy.template`
+    - Create a Group and Managed Policy to use Amazon Polly.
+    - Create a Managed Policy allowing all actions except deleting Lexicon.
+    - Attach the Managed Policy to the given Group of `PollyDevGroupName`.
+
 ## Templates for Inspector SNS
 
 1. `Inspector-SNS.template`
@@ -86,9 +117,3 @@ Some AWS CloudFormation templates for personal use.
     - Create also the LogGroup
     - Modified from Original [Source](https://s3-us-west-2.amazonaws.com/awscloudtrail/cloudwatch-alarms-for-cloudtrail-api-activity/CloudWatch_Alarms_for_CloudTrail_API_Activity.json) from Amazon.
 
-## Templates for Polly 
-
-1. `Polly-Dev-GroupAndPolicy.template`
-    - Create a Group and Managed Policy to use Amazon Polly.
-    - Create a Managed Policy allowing all actions except deleting Lexicon.
-    - Attach the Managed Policy to the given Group of `PollyDevGroupName`.

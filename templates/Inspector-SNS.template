@@ -3,19 +3,19 @@
 
   "Description": "Create SNS Topic, Subscription and Topic Policies for using Amazon Inspector.",
 
-  "Parameters" : {
-    "TopicName" : {
-      "Description" : "Name of the SNS topic.",
-      "Type" : "String",
+  "Parameters": {
+    "TopicName": {
+      "Type": "String",
+      "Description": "Name of the SNS topic.",
       "Default": "Inspector-EC2"
     },
     "SubscriptionEmail": {
-      "Description" : "Email address for the Inspector finding subscription.",
-      "Type" : "String"
+      "Type": "String",
+      "Description": "Email address for the Inspector finding subscription."
     },
     "InspectorRegionUserArn": {
-      "Description" : "For the right ARN please see https://docs.aws.amazon.com/inspector/latest/userguide/inspector_assessments.html#sns-topic",
-      "Type" : "String"
+      "Type": "String",
+      "Description": "For the right ARN please see https://docs.aws.amazon.com/inspector/latest/userguide/inspector_assessments.html#sns-topic"
     }
   },
 
@@ -29,12 +29,12 @@
       }
     },
 
-    "SnsSubscription" : {
-      "Type" : "AWS::SNS::Subscription",
-      "Properties" : {
-        "Endpoint" : {"Ref": "SubscriptionEmail"},
-        "Protocol" : "email",
-        "TopicArn" : {"Ref" : "SnsTopic"}
+    "SnsSubscription": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": {"Ref": "SubscriptionEmail"},
+        "Protocol": "email",
+        "TopicArn": {"Ref": "SnsTopic"}
       }
     },
 

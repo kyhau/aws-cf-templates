@@ -5,16 +5,16 @@
 
   "Parameters": {
     "Function1Name": {
-      "Description": "Name of the lambda function to be created or updated.",
-      "Type": "String"
+      "Type": "String",
+      "Description": "Name of the lambda function to be created or updated."
     },
     "GroupName": {
-      "Description": "Name of the Group for managing the given Lambda function.",
-      "Type": "String"
+      "Type": "String",
+      "Description": "Name of the Group for managing the given Lambda function."
     },
     "RoleName": {
-      "Description": "Name of the Role for managing the given Lambda function.",
-      "Type": "String"
+      "Type": "String",
+      "Description": "Name of the Role for managing the given Lambda function."
     }
   },
 
@@ -49,7 +49,7 @@
             }
           ]
         },
-        "Groups" : [{ "Ref": "GroupName" }]
+        "Groups": [{ "Ref": "GroupName" }]
       }
     }
   }

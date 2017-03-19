@@ -3,15 +3,15 @@
 
   "Description": "Create an AWS CloudTrail trail capturing AWS API calls made by your AWS account and publishing the logs to an Amazon S3 bucket and SNS Topic.",
 
-  "Parameters" : {
-    "BucketName" : {
-      "Description" : "Name of the S3 bucket.",
-      "Type" : "String",
+  "Parameters": {
+    "BucketName": {
+      "Type": "String",
+      "Description": "Name of the S3 bucket.",
       "Default": "name-cloudtrail"
     },
-    "TopicName" : {
-      "Description" : "Name of the SNS topic.",
-      "Type" : "String",
+    "TopicName": {
+      "Type": "String",
+      "Description": "Name of the SNS topic.",
       "Default": "CloudTrail-SNS"
     }
   },

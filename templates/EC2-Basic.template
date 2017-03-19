@@ -5,69 +5,69 @@
 
   "Parameters": {
     "EC2Name": {
-      "Description": "EC2 Name.",
-      "Type": "String"
+      "Type": "String",
+      "Description": "EC2 Name."
     },
     "EC2HostName": {
-      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname).",
-      "Type": "String"
+      "Type": "String",
+      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname)."
     },
     "AMI": {
-      "Description": "The AMI ID of the image that the EC2 instance to be created from.",
-      "Type": "String"
+      "Type": "String",
+      "Description": "The AMI ID of the image that the EC2 instance to be created from."
     },
     "InstanceType": {
-      "Description": "EC2 instance type",
       "Type": "String",
+      "Description": "EC2 instance type",
       "Default": "t2.medium",
       "AllowedValues": [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
     "VolumeType": {
-      "Description": "The volume type. This can be gp2 for General Purpose SSD, or standard for Magnetic volume (add io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, if needed).",
       "Type": "String",
+      "Description": "The volume type. This can be gp2 for General Purpose SSD, or standard for Magnetic volume (add io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, if needed).",
       "Default": "standard",
       "AllowedValues": ["standard", "gp2"]
     },
     "VolumeSize": {
-      "Description": "The size of the volume, in gibibytes (GiBs).",
       "Type": "Integer",
+      "Description": "The size of the volume, in gibibytes (GiBs).",
       "Default": "10"
     },
     "DeleteOnTermination": {
-      "Description": "Delete on termination.",
       "Type": "String",
+      "Description": "Delete on termination.",
       "Default": "false",
       "AllowedValues": ["true", "false"]
     },
     "InstanceRole": {
-      "Description": "Instance IAM Role.",
       "Type": "String",
+      "Description": "Instance IAM Role.",
       "Default": "devops",
       "AllowedValues": ["devops"],
       "ConstraintDescription": "must be a predefined IAM Role."
     },
     "SubnetID": {
-      "Description": "Subnet ID.",
-      "Type": "AWS::EC2::Subnet::Id"
+      "Type": "AWS::EC2::Subnet::Id",
+      "Description": "Subnet ID."
     },
     "SecurityGroupID": {
-      "Description": "Security Group ID.",
-      "Type": "AWS::EC2::SecurityGroup::Id"
+      "Type": "AWS::EC2::SecurityGroup::Id",
+      "Description": "Security Group ID."
     },
     "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
       "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
       "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
     "SaltMasterHost": {
-      "Description": "Optional. Hostname (or private IP) of the Salt Master.",
       "Type": "String",
+      "Description": "Optional. Hostname (or private IP) of the Salt Master.",
       "Default": ""
     },
     "ServiceTag": {
-      "Description": "Value of the tag Service",
       "Type": "String",
+      "Description": "Value of the tag Service",
       "Default": "vm",
       "AllowedValues": ["vm", "openvpn"],
       "ConstraintDescription": "must be a predefined Tag."

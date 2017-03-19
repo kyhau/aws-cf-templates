@@ -5,16 +5,16 @@
 
   "Parameters": {
     "SecurityGroupName": {
-      "Description": "The name of the Security Group Name tag.",
-      "Type": "String"
+      "Type": "String",
+      "Description": "The name of the Security Group Name tag."
     },
     "VpcID": {
-      "Description": "VPC ID of the Database",
-      "Type": "AWS::EC2::VPC::Id"
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "VPC ID of the Database"
     },
     "ServiceTag": {
-      "Description": "Value of the tag Service",
       "Type": "String",
+      "Description": "Value of the tag Service",
       "Default": "staging",
       "AllowedValues": ["production", "staging"],
       "ConstraintDescription": "must be a predefined tag."

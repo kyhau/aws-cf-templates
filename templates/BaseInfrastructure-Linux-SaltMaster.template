@@ -4,9 +4,9 @@
   "Description": "Create base infrastructure for a salt-master server at Sydney (including VPC, security groups for EC2s and VPN).",
 
   "Parameters": {
-    "NewProjectTag": {
+    "ProjectTag": {
       "Type": "String",
-      "Description": "New tag to be used for tagging related sources."
+      "Description": " tag to be used for tagging related sources."
     },
     "VpcCidrFirst2Parts": {
       "Type": "String",
@@ -34,7 +34,7 @@
         "EnableDnsHostnames": "true",
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "NewProjectTag" } },
+          { "Key": "Name", "Value": { "Ref": "ProjectTag" } },
           { "Key": "Network", "Value": "Public" }
         ]
       }
@@ -49,7 +49,7 @@
         "VpcId": { "Ref": "ProjectVpc" },
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Fn::Join": ["-", [{"Ref": "NewProjectTag"}, {"Ref": "VpcSubnetZone"}]]} },
+          { "Key": "Name", "Value": { "Fn::Join": ["-", [{"Ref": "ProjectTag"}, {"Ref": "VpcSubnetZone"}]]} },
           { "Key": "Network", "Value": "Public" }
         ]
       }
@@ -67,7 +67,7 @@
       "Properties": {
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "NewProjectTag" } },
+          { "Key": "Name", "Value": { "Ref": "ProjectTag" } },
           { "Key": "Network", "Value": "Public" }
         ]
       }
@@ -86,7 +86,7 @@
       "Properties": {
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "NewProjectTag" } }
+          { "Key": "Name", "Value": { "Ref": "ProjectTag" } }
         ],
         "DomainName": { "Fn::Join": ["", [{"Ref": "AWS::Region"}, ".compute.internal"]]},
         "DomainNameServers": [ "AmazonProvidedDNS" ]
@@ -107,7 +107,7 @@
         "VpcId": { "Ref": "ProjectVpc" },
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "NewProjectTag" } }
+          { "Key": "Name", "Value": { "Ref": "ProjectTag" } }
         ]
       }
     },
@@ -140,7 +140,7 @@
         "VpcId": { "Ref": "ProjectVpc" },
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Ref": "NewProjectTag" } },
+          { "Key": "Name",  "Value": { "Ref": "ProjectTag" } },
           { "Key": "Network", "Value": "Public" }
         ]
       }
@@ -168,7 +168,7 @@
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "VpcId": { "Ref": "ProjectVpc" },
-        "GroupDescription": { "Ref": "NewProjectTag" },
+        "GroupDescription": { "Ref": "ProjectTag" },
         "SecurityGroupIngress": [
           { "IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
@@ -184,7 +184,7 @@
         ],
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Ref": "NewProjectTag" } },
+          { "Key": "Name",  "Value": { "Ref": "ProjectTag" } },
           { "Key": "Service", "Value": "salt-master" }
         ]
       }
@@ -216,7 +216,7 @@
         ],
         "Tags": [
           { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Fn::Join": ["-", ["openvpn", {"Ref": "NewProjectTag"}]]} },
+          { "Key": "Name",  "Value": { "Fn::Join": ["-", ["openvpn", {"Ref": "ProjectTag"}]]} },
           { "Key": "Service", "Value": "openvpn" }
         ]
       }

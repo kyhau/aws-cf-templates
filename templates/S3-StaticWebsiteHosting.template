@@ -3,36 +3,36 @@
 
   "Description": "Create S3 bucket for static website hosting.",
 
-  "Parameters" : {
-    "BucketName" : {
-      "Type" : "String",
-      "Description" : "The name of the S3 bucket for static website hosting."
+  "Parameters": {
+    "BucketName": {
+      "Type": "String",
+      "Description": "The name of the S3 bucket for static website hosting."
     },
-    "IndexDoc" : {
-      "Type" : "String",
-      "Description" : "The file name of the index document.",
+    "IndexDoc": {
+      "Type": "String",
+      "Description": "The file name of the index document.",
       "Default": "index.html"
     },
-    "EnableVersioning" : {
-      "Description" : "Enable versioning (Enabled or Suspended).",
-      "Type" : "String",
+    "EnableVersioning": {
+      "Type": "String",
+      "Description": "Enable versioning (Enabled or Suspended).",
       "AllowedValues": ["Enabled", "Suspended"],
       "Default": "Enabled"
     },
-    "ErrorDoc" : {
-      "Type" : "String",
-      "Description" : "The file name of the error document.",
+    "ErrorDoc": {
+      "Type": "String",
+      "Description": "The file name of the error document.",
       "Default": "error.html"
     },
-    "ReadWriteDeleteGroupName" : {
-      "Description" : "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
-      "Type" : "String",
+    "ReadWriteDeleteGroupName": {
+      "Type": "String",
+      "Description": "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
       "Default":""
     }
   },
 
-  "Conditions" : {
-    "VersioningEnabled" : {"Fn::Equals" : ["Enabled", {"Ref" : "EnableVersioning"}]},
+  "Conditions": {
+    "VersioningEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableVersioning"}]},
     "ReadWriteDeleteGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadWriteDeleteGroupName"}]}]}
   },
 
@@ -41,7 +41,7 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "AccessControl": "LogDeliveryWrite",
-        "BucketName": { "Fn::Join" : ["-", [{"Ref" : "BucketName"}, "logs"]]},
+        "BucketName": { "Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
         "VersioningConfiguration": { "Status": "Suspended" }
       }
     },
@@ -50,11 +50,11 @@
       "Type": "AWS::S3::Bucket",
       "DependsOn": ["S3BucketLogs"],
       "Properties": {
-        "BucketName" : {"Ref":"BucketName"},
+        "BucketName": {"Ref":"BucketName"},
         "AccessControl": "PublicRead",
         "WebsiteConfiguration": {
-          "IndexDocument": {"Ref" : "IndexDoc"},
-          "ErrorDocument": {"Ref" : "ErrorDoc"}
+          "IndexDocument": {"Ref": "IndexDoc"},
+          "ErrorDocument": {"Ref": "ErrorDoc"}
         },
         "LoggingConfiguration": {
           "DestinationBucketName": { "Ref": "S3BucketLogs" }
@@ -85,18 +85,18 @@
 
     "IamGroupReadWriteDelete": {
       "Type": "AWS::IAM::Group",
-      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "Condition": "ReadWriteDeleteGroupNameSpecified",
       "Properties": {
         "GroupName": {"Ref": "ReadWriteDeleteGroupName"}
       }
     },
     "ManagedPolicyS3": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "Condition" : "ReadWriteDeleteGroupNameSpecified",
+      "Condition": "ReadWriteDeleteGroupNameSpecified",
       "DependsOn": ["S3Bucket", "IamGroupReadWriteDelete"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
-        "PolicyDocument" : {
+        "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
@@ -115,7 +115,7 @@
             }
           ]
         },
-        "Groups" : [
+        "Groups": [
           { "Ref": "ReadWriteDeleteGroupName" }
         ]
       }

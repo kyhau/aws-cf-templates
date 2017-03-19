@@ -3,19 +3,19 @@
 
   "Description": "Create Group and Managed Policy to use Amazon Polly.",
 
-  "Parameters" : {
-    "PollyDevGroupName" : {
-      "Description" : "Name of the Group for accessing Polly.",
-      "Type" : "String",
+  "Parameters": {
+    "PollyDevGroupName": {
+      "Type": "String",
+      "Description": "Name of the Group for accessing Polly.",
       "Default": "PollyDev"
     }
   },
 
   "Resources": {
-    "PollyDevGroup" : {
-      "Type" : "AWS::IAM::Group",
-      "Properties" : {
-        "GroupName": { "Ref" : "PollyDevGroupName" }
+    "PollyDevGroup": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": { "Ref": "PollyDevGroupName" }
       }
     },
 
@@ -24,7 +24,7 @@
       "DependsOn": ["PollyDevGroup"],
       "Properties": {
         "Description": "Managed Policy for accessing Polly (AllowAllActionsExceptDenyDelete)",
-        "PolicyDocument" : {
+        "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
@@ -49,7 +49,7 @@
             }
           ]
         },
-        "Groups" : [
+        "Groups": [
           { "Ref": "PollyDevGroup" }
         ]
       }

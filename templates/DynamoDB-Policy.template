@@ -3,25 +3,25 @@
 
   "Description": "Create a managed policy for using and managing a DynamoDB table.",
 
-  "Parameters" : {
-    "TableName" : {
-      "Description" : "Name of the DynamoDB table to grant permissions on.",
-      "Type" : "String",
+  "Parameters": {
+    "TableName": {
+      "Type": "String",
+      "Description": "Name of the DynamoDB table to grant permissions on.",
       "Default": ""
     },
-    "GroupName" : {
-      "Description" : "optional. List Group(s) to attach DynamoBD policy",
-      "Type" : "String",
+    "GroupName": {
+      "Type": "String",
+      "Description": "optional. List Group(s) to attach DynamoBD policy",
       "Default":""
     },
-    "RoleName" : {
-      "Description" : "optional. List Role(s) to attach DynamoBD policy",
-      "Type" : "String",
+    "RoleName": {
+      "Type": "String",
+      "Description": "optional. List Role(s) to attach DynamoBD policy",
       "Default":""
     },
-    "UserName" : {
-      "Description" : "optional. List User(s) to attach DynamoBD policy",
-      "Type" : "String",
+    "UserName": {
+      "Type": "String",
+      "Description": "optional. List User(s) to attach DynamoBD policy",
       "Default":""
     }
   },
@@ -38,7 +38,7 @@
       "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
         "Description": "Managed Policy for accessing DynamoDB (read/write/delete)",
-        "PolicyDocument" : {
+        "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
@@ -73,9 +73,9 @@
             }
           ]
         },
-        "Groups" : {"Fn::If": ["HasGroupName", [{"Ref": "GroupName"}], {"Ref": "AWS::NoValue"}]},
-        "Roles" : {"Fn::If": ["HasRoleName", [{"Ref": "RoleName"}], {"Ref": "AWS::NoValue"}]},
-        "Users" : {"Fn::If": ["HasUserName", [{"Ref": "UserName"}], {"Ref": "AWS::NoValue"}]}
+        "Groups": {"Fn::If": ["HasGroupName", [{"Ref": "GroupName"}], {"Ref": "AWS::NoValue"}]},
+        "Roles": {"Fn::If": ["HasRoleName", [{"Ref": "RoleName"}], {"Ref": "AWS::NoValue"}]},
+        "Users": {"Fn::If": ["HasUserName", [{"Ref": "UserName"}], {"Ref": "AWS::NoValue"}]}
       }
     }
   }

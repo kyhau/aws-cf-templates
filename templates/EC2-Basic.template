@@ -66,6 +66,11 @@
       "Description": "Optional. Hostname (or private IP) of the Salt Master.",
       "Default": ""
     },
+    "SaltVersion": {
+      "Type": "String",
+      "Description": "Optional. Salt-minion version to be installed.",
+      "Default": "2016.11.3"
+    },
     "ServiceTag": {
       "Type": "String",
       "Description": "Value of the tag Service",
@@ -76,7 +81,8 @@
   },
 
   "Conditions": {
-    "SaltMasterHostSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltMasterHost"}]}]}
+    "SaltMasterHostSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltMasterHost"}]}]},
+    "SaltVersionSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltVersion"}]}]}
   },
 
   "Resources": {
@@ -96,7 +102,19 @@
           "sudo hostname ", { "Ref" : "EC2HostName" }, "\n",
           "sed -i '1i 127.0.0.1 ", { "Ref" : "EC2HostName" }, " ' /etc/hosts\n",
           "echo ", { "Ref" : "EC2HostName" }, " > /etc/hostname\n",
-          "hostname -F /etc/hostname"
+          "hostname -F /etc/hostname\n",
+          { "Fn::If": [
+            "SaltMasterHostSpecified",
+            {
+              "Fn::Join" : ["", [
+                "curl -o bootstrap-salt.sh -L https://bootstrap.saltstack.com\n",
+                "sudo sh bootstrap-salt.sh git v", {"Ref": "SaltVersion"}, "\n",
+                "sed -i -e 's/#master: salt/master: ", {"Ref": "SaltMasterHost"}, "/g' /etc/salt/minion",
+                "service salt-minion restart"
+              ]]
+            },
+            { "Ref": "AWS::NoValue"}
+          ]}
         ]]}},
         "NetworkInterfaces": [{
           "AssociatePublicIpAddress": "true",

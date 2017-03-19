@@ -82,9 +82,7 @@
   "Resources": {
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
-      "Metadata": {
-        "Comment": "EC2"
-      },
+      "Metadata": { "Comment": "EC2" },
       "Properties": {
         "DisableApiTermination": "false",
         "InstanceInitiatedShutdownBehavior": "stop",

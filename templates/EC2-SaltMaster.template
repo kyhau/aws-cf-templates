@@ -38,7 +38,7 @@
     "DeleteOnTermination": {
       "Type": "String",
       "Description": "Delete on termination.",
-      "Default": "true",
+      "Default": "false",
       "AllowedValues": ["true", "false"]
     },
     "InstanceRole": {
@@ -82,21 +82,7 @@
   "Resources": {
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
-      "Metadata": {
-        "Comment": "EC2",
-
-        "AWS::CloudFormation::Init": {
-          "configSets": {
-            "ascending": [ "Install-Salt-Master" ]
-          }
-        },
-
-        "Install-Salt-Master": {
-          "commands": {
-          }
-        }
-
-      },
+      "Metadata": { "Comment": "EC2" },
       "Properties": {
         "DisableApiTermination": "false",
         "InstanceInitiatedShutdownBehavior": "stop",

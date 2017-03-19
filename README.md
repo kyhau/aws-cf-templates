@@ -13,8 +13,6 @@ authors be liable for any claim, damages or other liability, whether in an
 action of contract, tort or otherwise, arising from, out of or in connection
 with the software or the use or other dealings in the software.
 
-
-
 ##### Table of Contents
 
 - [Scripts to manage templates](#scripts-to-manage-templates)
@@ -26,6 +24,13 @@ with the software or the use or other dealings in the software.
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
 - [Templates for logging and reporting](#templates-for-logging-and-reporting)
+
+##### Notes
+
+- [Discussion](http://serverfault.com/questions/462522/why-doesnt-the-aws-cloud-formation-install-the-packages-that-i-specify)
+  on [cloud-init](http://cloudinit.readthedocs.org/) vs. 
+  [cfn-init](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-init.html).
+
 
 ## Scripts to manage templates
 

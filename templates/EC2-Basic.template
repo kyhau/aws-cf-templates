@@ -13,8 +13,9 @@
       "Description": "Hostname of the EC2 instance (will be written into /etc/hostname)."
     },
     "AMI": {
-      "Type": "String",
-      "Description": "The AMI ID of the image that the EC2 instance to be created from."
+      "Type": "AWS::EC2::Image::Id",
+      "Description": "The AMI ID of the image that the EC2 instance to be created from (check and update to use the latest Ubuntu).",
+      "Default": "ami-4e686b2d"
     },
     "InstanceType": {
       "Type": "String",
@@ -30,7 +31,7 @@
       "AllowedValues": ["standard", "gp2"]
     },
     "VolumeSize": {
-      "Type": "Integer",
+      "Type": "Number",
       "Description": "The size of the volume, in gibibytes (GiBs).",
       "Default": "10"
     },

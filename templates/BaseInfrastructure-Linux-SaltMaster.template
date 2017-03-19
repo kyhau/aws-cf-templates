@@ -176,7 +176,7 @@
           { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "4505", "ToPort": "4505", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "4506", "ToPort": "4505", "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": "4506", "ToPort": "4506", "CidrIp": "0.0.0.0/0" },
           { "IpProtocol": "tcp", "FromPort": "5432", "ToPort": "5432", "CidrIp": { "Fn::Join": ["", [{"Ref": "VpcCidrFirst2Parts"}, ".0.0/16"]]} }
         ],
         "SecurityGroupEgress": [

@@ -9,7 +9,7 @@
       "Description": "The name of the EC2."
     },
     "AMI": {
-      "Type": "String",
+      "Type": "AWS::EC2::Image::Id",
       "Description": "The AMI ID of the image that the EC2 instance to be created from (check latest Ubuntu AMI image).",
       "Default": "ami-4e686b2d"
     },

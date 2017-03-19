@@ -22,10 +22,10 @@ with the software or the use or other dealings in the software.
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
 - [Templates for S3 management](#templates-for-s3-management)
 - [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
-- [Templates for RDS](#templates-for-rds)
+- [Templates for databases](#templates-for-databases)
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
-- [Templates for Logging and Reporting](#templates-for-logging-and-reporting)
+- [Templates for logging and reporting](#templates-for-logging-and-reporting)
 
 ## Scripts to manage templates
 
@@ -97,15 +97,13 @@ with the software or the use or other dealings in the software.
     - Create a Managed Policy for managing and uploading files to the S3 bucket.
     - Attach the Managed Policy to the given Group.
 
-## Templates for RDS
+## Templates for Databases
 
 1. `RDS-PostgreSQL.template`
     - Create RDS PostgreSQL with PostGIS instance and a Read-Write managed policy attached.
 
 1. `RDS-SecurityGroup.template`
     - Create RDS Security Group.
-
-## Templates for DynamoDB
 
 1. `DynamoDB-Table.template`
     - Create a DynamoDB Table.
@@ -128,7 +126,7 @@ with the software or the use or other dealings in the software.
    - Create Topic Policies for the Inspector to publish message. Inspector of different region has different ARN.
      See [Setting Up an SNS Topic for Amazon Inspector Notifications](https://docs.aws.amazon.com/inspector/latest/userguide/inspector_assessments.html#sns-topic).
 
-## Templates for Logging and Reporting 
+## Templates for logging and reporting 
 
 1. `CloudTrail-S3-SNS.template`
     - Create an AWS CloudTrail trail capturing AWS API calls made by your AWS account.

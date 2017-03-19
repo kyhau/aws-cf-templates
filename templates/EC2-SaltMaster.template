@@ -6,13 +6,11 @@
   "Parameters": {
     "EC2Name": {
       "Type": "String",
-      "Description": "EC2 Name.",
-      "Default": "salt-master-alpha"
+      "Description": "EC2 Name."
     },
     "EC2HostName": {
       "Type": "String",
-      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname).",
-      "Default": "alpha"
+      "Description": "Hostname of the EC2 instance (will be written into /etc/hostname)."
     },
     "AMI": {
       "Type": "AWS::EC2::Image::Id",
@@ -46,8 +44,8 @@
     "InstanceRole": {
       "Type": "String",
       "Description": "Instance IAM Role.",
-      "Default": "bn-devops-testing",
-      "AllowedValues": ["bn-devops-testing"],
+      "Default": "devops",
+      "AllowedValues": ["devops"],
       "ConstraintDescription": "must be a predefined IAM Role."
     },
     "SubnetID": {

@@ -79,8 +79,12 @@
   },
 
   "Conditions": {
-    "SaltMasterHostSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltMasterHost"}]}]},
-    "SaltVersionSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltVersion"}]}]}
+    "SaltEnabled": {
+      "Fn::And": [
+        {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltMasterHost"}]}]},
+        {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltVersion"}]}]}
+      ]
+    }
   },
 
   "Resources": {
@@ -102,7 +106,7 @@
           "echo ", { "Ref" : "EC2HostName" }, " > /etc/hostname\n",
           "hostname -F /etc/hostname\n",
           { "Fn::If": [
-            "SaltMasterHostSpecified",
+            "SaltEnabled",
             {
               "Fn::Join" : ["", [
                 "curl -o bootstrap-salt.sh -L https://bootstrap.saltstack.com\n",

@@ -44,9 +44,7 @@
     "InstanceRole": {
       "Type": "String",
       "Description": "Instance IAM Role.",
-      "Default": "devops",
-      "AllowedValues": ["devops"],
-      "ConstraintDescription": "must be a predefined IAM Role."
+      "Default": "devops"
     },
     "SubnetID": {
       "Type": "AWS::EC2::Subnet::Id",
@@ -61,10 +59,10 @@
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
       "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
-    "SaltMasterHost": {
+    "SaltVersion": {
       "Type": "String",
-      "Description": "Optional. Hostname (or private IP) of the Salt Master.",
-      "Default": ""
+      "Description": "Optional. Salt-master version to be installed.",
+      "Default": "2016.11.3"
     },
     "ServiceTag": {
       "Type": "String",
@@ -76,7 +74,7 @@
   },
 
   "Conditions": {
-    "SaltMasterHostSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltMasterHost"}]}]}
+    "SaltVersionSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SaltVersion"}]}]}
   },
 
   "Resources": {
@@ -96,7 +94,22 @@
           "sudo hostname ", { "Ref" : "EC2HostName" }, "\n",
           "sed -i '1i 127.0.0.1 ", { "Ref" : "EC2HostName" }, " ' /etc/hosts\n",
           "echo ", { "Ref" : "EC2HostName" }, " > /etc/hostname\n",
-          "hostname -F /etc/hostname"
+          "hostname -F /etc/hostname\n",
+          { "Fn::If": [
+            "SaltVersionSpecified",
+            {
+              "Fn::Join" : ["", [
+                "curl -o bootstrap-salt.sh -L https://bootstrap.saltstack.com\n",
+                "sudo sh bootstrap-salt.sh -P -M git v", {"Ref": "SaltVersion"}, "\n",
+                "sudo mkdir -p /srv/{salt,pillar}\n",
+                "sed -i -e 's/#master: salt/master: 127.0.0.1/g' /etc/salt/minion\n",
+                "sudo service salt-master restart\n",
+                "sudo service salt-minion restart\n",
+                "sudo salt-key -A -y\n"
+              ]]
+            },
+            { "Ref": "AWS::NoValue" }
+          ]}
         ]]}},
         "NetworkInterfaces": [{
           "AssociatePublicIpAddress": "true",

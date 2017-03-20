@@ -60,6 +60,11 @@ with the software or the use or other dealings in the software.
     - Create SecurityGroup for EC2 instances (Windows)
     - Create SecurityGroup for VPN
 
+1. `EC2-SaltMaster.template`
+    - Create an EC2 instance from an AMI.
+    - If `SaltVersion` is specified, Salt-Master and Salt-Minion will be installed with initial configurations.
+    - Create an Elastic IP, attached to the EC2 instance.
+
 1. `EC2-Basic.template`
     - Create an EC2 instance from an AMI.
     - Create an Elastic IP, attached to the EC2 instance.

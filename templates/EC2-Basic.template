@@ -44,9 +44,7 @@
     "InstanceRole": {
       "Type": "String",
       "Description": "Instance IAM Role.",
-      "Default": "devops",
-      "AllowedValues": ["devops"],
-      "ConstraintDescription": "must be a predefined IAM Role."
+      "Default": "devops"
     },
     "SubnetID": {
       "Type": "AWS::EC2::Subnet::Id",
@@ -109,11 +107,11 @@
               "Fn::Join" : ["", [
                 "curl -o bootstrap-salt.sh -L https://bootstrap.saltstack.com\n",
                 "sudo sh bootstrap-salt.sh git v", {"Ref": "SaltVersion"}, "\n",
-                "sed -i -e 's/#master: salt/master: ", {"Ref": "SaltMasterHost"}, "/g' /etc/salt/minion",
-                "service salt-minion restart"
+                "sed -i -e 's/#master: salt/master: ", {"Ref": "SaltMasterHost"}, "/g' /etc/salt/minion\n",
+                "service salt-minion restart\n"
               ]]
             },
-            { "Ref": "AWS::NoValue"}
+            { "Ref": "AWS::NoValue" }
           ]}
         ]]}},
         "NetworkInterfaces": [{

@@ -138,11 +138,22 @@
 
     "IPAddress": {
       "Type": "AWS::EC2::EIP",
+      "DependsOn": [ "EC2Instance" ],
       "Properties": {
         "Domain": "vpc",
         "InstanceId": { "Ref": "EC2Instance" }
       }
     }
+  },
 
+  "Outputs": {
+    "PublicIP": {
+      "Description": "The public IP address of the instance.",
+      "Value": { "Fn::GetAtt": [ "EC2Instance", "PublicIp" ] }
+    },
+    "PrivateIP": {
+      "Description": "The private IP address of the instance.",
+      "Value": { "Fn::GetAtt": [ "EC2Instance", "PrivateIp" ] }
+    }
   }
 }

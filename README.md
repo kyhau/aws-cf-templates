@@ -61,15 +61,15 @@ with the software or the use or other dealings in the software.
     - Create SecurityGroup for VPN
 
 1. `EC2-SaltMaster.template`
-    - Create an EC2 instance from an AMI.
-    - Create an Elastic IP, attached to the EC2 instance.
+    - Create an EC2 instance from an AMI with the specified `EC2HostName`.
     - If `SaltVersion` is specified, Salt-Master and Salt-Minion will be installed with initial configurations.
+    - Create an Elastic IP, attached to the EC2 instance.
 
 1. `EC2-Basic.template`
-    - Create an EC2 instance from an AMI.
-    - Create an Elastic IP, attached to the EC2 instance.
+    - Create an EC2 instance from an AMI with the specified `EC2HostName`.
     - If `SaltMasterHost` and `SaltVersion` are specified, Salt-Minion will be installed
       and the the salt-master host will be specified in `/etc/salt/minion`.    
+    - Create an Elastic IP, attached to the EC2 instance.
 
 1. `EC2-and-SecurityGroup-support-NFS-Rabbitmq.template`
     - Create an EC2 instance with an additional volume and Security Group supporting NFS and Rabbitmq ports.

@@ -16,12 +16,12 @@
     },
     "ReadOnlyGroupName": {
       "Type": "String",
-      "Description": "Optional. Name of the Group to be given Read-only access to the given bucket.",
+      "Description": "Optional. Name of the Group to be created and given Read-only access to the given bucket.",
       "Default":""
     },
     "ReadWriteDeleteGroupName": {
       "Type": "String",
-      "Description": "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
+      "Description": "Optional. Name of the Group to be created and given Read-Write-Delete access to the given bucket.",
       "Default":""
     }
   },

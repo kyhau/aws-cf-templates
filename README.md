@@ -20,6 +20,7 @@ with the software or the use or other dealings in the software.
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
 - [Templates for S3 management](#templates-for-s3-management)
 - [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
+- [Templates for Cognito](#templates-for-cognito)
 - [Templates for databases](#templates-for-databases)
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
@@ -65,10 +66,14 @@ with the software or the use or other dealings in the software.
     - If `SaltVersion` is specified, Salt-Master and Salt-Minion will be installed with initial configurations.
     - Create an Elastic IP, attached to the EC2 instance.
 
-1. `EC2-Basic.template`
+1. `EC2-Basic-Linux.template`
     - Create an EC2 instance from an AMI with the specified `EC2HostName`.
     - If `SaltMasterHost` and `SaltVersion` are specified, Salt-Minion will be installed
       and the the salt-master host will be specified in `/etc/salt/minion`.    
+    - Create an Elastic IP, attached to the EC2 instance.
+
+1. `EC2-Basic-Windows.template`
+    - Create an EC2 instance from an AMI with the specified `EC2HostName`.
     - Create an Elastic IP, attached to the EC2 instance.
 
 1. `EC2-and-SecurityGroup-support-NFS-Rabbitmq.template`
@@ -108,6 +113,11 @@ with the software or the use or other dealings in the software.
     - Create Bucket Policy for PublicRead access.
     - Create a Managed Policy for managing and uploading files to the S3 bucket.
     - Attach the Managed Policy to the given Group.
+
+## Templates for Cognito
+
+1. `Cognito-Dev-GroupAndPolicy.template`
+    - Create Group and Policy for Development team to access Cognito related resources.
 
 ## Templates for Databases
 

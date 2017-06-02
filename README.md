@@ -108,7 +108,7 @@ with the software or the use or other dealings in the software.
 ## Templates for S3 Static Website Hosting
 
 1. `CloudFront-S3-StaticWebsite.template`
-    - Create a CloudFront Distributon
+    - Create a CloudFront Distribution
     - Create S3 bucket with Static Website, Versioning and Logging enabled.
     - Create S3 bucket for logging.
     - Create Bucket Policy for PublicRead access.

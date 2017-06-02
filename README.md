@@ -107,6 +107,39 @@ with the software or the use or other dealings in the software.
 
 ## Templates for S3 Static Website Hosting
 
+1. `CloudFront-S3-StaticWebsite.template`
+    - Create a CloudFront Distributon
+    - Create S3 bucket with Static Website, Versioning and Logging enabled.
+    - Create S3 bucket for logging.
+    - Create Bucket Policy for PublicRead access.
+    - Create a Managed Policy for managing and uploading files to the S3 bucket.
+    - Attach the Managed Policy to the given Group.
+    
+    Prerequisites:
+
+    1. Upload a server (ssl) certificate to IAM [using aws-cli](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html#upload-server-certificate).
+
+       ```cmd
+       aws iam upload-server-certificate ^
+        --server-certificate-name example.com ^
+        --certificate-body file://example.crt ^
+        --private-key file://example.key ^
+        --certificate-chain file://intermediate.crt ^
+        --path /cloudfront/ ^
+        --profile devops
+       ```
+    1. To retrieve the `ServerCertificateId` or other certificate details
+   
+       ```cmd
+       aws iam list-server-certificates (--profile devops)
+       ```
+
+    1. Add Origin Access Identity for CloudFront to interact with S3 buckets (CloudFront > Origin Access Identity).
+       Note that an Origin Access Identity cannot be created with CloudFormation ([Ref](https://stackoverflow.com/questions/20632828/aws-cloud-formation-script-to-create-s3-bucket-and-distribution)).
+    1. Use the CloudFormation template.
+    1. Add new Route53 record sets.
+
+
 1. `S3-StaticWebsiteHosting.template`
     - Create S3 bucket with Static Website, Versioning and Logging enabled.
     - Create S3 bucket for logging.

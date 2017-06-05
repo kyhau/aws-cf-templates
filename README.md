@@ -141,7 +141,7 @@ with the software or the use or other dealings in the software.
     
     Notes:
     
-    CloudFront: Error: NoSuckKey? [Ref](https://stackoverflow.com/questions/15309113/amazon-cloudfront-doesnt-respect-my-s3-website-buckets-index-html-rules)
+    CloudFront: Error: NoSuchKey? [Ref](https://stackoverflow.com/questions/15309113/amazon-cloudfront-doesnt-respect-my-s3-website-buckets-index-html-rules)
 
     1. Check the “Origin Domain Name” of that distribution.
     1. DO NOT use the domain name of the S3 bucket which was provided in the auto-complete droplist, e.g. “mywebsite.s3.amazonaws.com”.

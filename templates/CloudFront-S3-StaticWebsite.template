@@ -100,7 +100,7 @@
         "LoggingConfiguration": {
           "DestinationBucketName": {"Ref":"LogBucket"}
         },
-        "VersioningConfiguration": {"Status": {"Fn::If": ["IsProduction", "Enabled", "Suspended"]}},
+        "VersioningConfiguration": {"Status": "Suspended"},
         "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "BillingTag"]}}]
       },
       "DeletionPolicy": "Delete"
@@ -186,12 +186,13 @@
             "Prefix": "cf"
           },
           "Origins": [{
-            "DomainName": {"Fn::Join": ["", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, ".s3.amazonaws.com"]]},
+            "DomainName": {"Fn::Join": ["", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, ".s3-website-", {"Ref": "AWS::Region"}, ".amazonaws.com"]]},
             "Id": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]},
-            "S3OriginConfig": {
-              "OriginAccessIdentity": {"Fn::Join": ["", ["origin-access-identity/cloudfront/", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontOAI"]}]]}
+            "CustomOriginConfig": {
+              "OriginProtocolPolicy": "http-only"
             }
           }],
+          "HttpVersion": "http2",
           "PriceClass": {"Ref":"CloudFrontPriceClass"},
           "ViewerCertificate": {
             "CloudFrontDefaultCertificate": {"Ref":"AWS::NoValue"},

@@ -138,7 +138,14 @@ with the software or the use or other dealings in the software.
        Note that an Origin Access Identity cannot be created with CloudFormation ([Ref](https://stackoverflow.com/questions/20632828/aws-cloud-formation-script-to-create-s3-bucket-and-distribution)).
     1. Use the CloudFormation template.
     1. Add new Route53 record sets.
+    
+    Notes:
+    
+    CloudFront: Error: NoSuckKey? [Ref](https://stackoverflow.com/questions/15309113/amazon-cloudfront-doesnt-respect-my-s3-website-buckets-index-html-rules)
 
+    1. Check the “Origin Domain Name” of that distribution.
+    1. DO NOT use the domain name of the S3 bucket which was provided in the auto-complete droplist, e.g. “mywebsite.s3.amazonaws.com”.
+    1. Use the actual hosting domain name, e.g. “mywebsite.s3-website-us-east-1.amazonaws.com”.
 
 1. `S3-StaticWebsiteHosting.template`
     - Create S3 bucket with Static Website, Versioning and Logging enabled.

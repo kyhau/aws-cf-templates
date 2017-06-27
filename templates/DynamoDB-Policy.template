@@ -5,23 +5,23 @@
 
   "Parameters": {
     "TableName": {
-      "Type": "String",
       "Description": "Name of the DynamoDB table to grant permissions on.",
+      "Type": "String",
       "Default": ""
     },
     "GroupName": {
-      "Type": "String",
       "Description": "optional. List Group(s) to attach DynamoBD policy",
+      "Type": "String",
       "Default":""
     },
     "RoleName": {
-      "Type": "String",
       "Description": "optional. List Role(s) to attach DynamoBD policy",
+      "Type": "String",
       "Default":""
     },
     "UserName": {
-      "Type": "String",
       "Description": "optional. List User(s) to attach DynamoBD policy",
+      "Type": "String",
       "Default":""
     }
   },

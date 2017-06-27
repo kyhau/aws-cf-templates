@@ -5,8 +5,8 @@
 
   "Parameters": {
     "PollyDevGroupName": {
-      "Type": "String",
       "Description": "Name of the Group for accessing Polly.",
+      "Type": "String",
       "Default": "PollyDev"
     }
   },

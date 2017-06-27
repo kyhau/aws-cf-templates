@@ -5,13 +5,13 @@
   
   "Parameters": {
     "LogGroupName": {
-      "Type": "String",
       "Default": "CloudTrail/DefaultLogGroup",
+      "Type": "String",
       "Description": "Enter CloudWatch Logs log group name. Default is CloudTrail/DefaultLogGroup"
     },
     "Email": {
-      "Type": "String",
-      "Description": "Email address to notify when an API activity has triggered an alarm"
+      "Description": "Email address to notify when an API activity has triggered an alarm",
+      "Type": "String"
     }
   },
   
@@ -19,7 +19,7 @@
     "LogGroup": {
        "Type": "AWS::Logs::LogGroup",
        "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" }
+        "LogGroupName": {"Ref": "LogGroupName" }
        }
     },
 
@@ -27,7 +27,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = AuthorizeSecurityGroupIngress) || ($.eventName = AuthorizeSecurityGroupEgress) || ($.eventName = RevokeSecurityGroupIngress) || ($.eventName = RevokeSecurityGroupEgress) || ($.eventName = CreateSecurityGroup) || ($.eventName = DeleteSecurityGroup) }",
         "MetricTransformations": [
           {
@@ -44,7 +44,7 @@
       "Properties": {
         "AlarmName": "CloudTrailSecurityGroupChanges",
         "AlarmDescription": "Alarms when an API call is made to create, update or delete a Security Group.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "SecurityGroupEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -59,7 +59,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = CreateNetworkAcl) || ($.eventName = CreateNetworkAclEntry) || ($.eventName = DeleteNetworkAcl) || ($.eventName = DeleteNetworkAclEntry) || ($.eventName = ReplaceNetworkAclEntry) || ($.eventName = ReplaceNetworkAclAssociation) }",
         "MetricTransformations": [
           {
@@ -76,7 +76,7 @@
       "Properties": {
         "AlarmName": "CloudTrailNetworkAclChanges",
         "AlarmDescription": "Alarms when an API call is made to create, update or delete a Network ACL.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "NetworkAclEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -91,7 +91,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = CreateCustomerGateway) || ($.eventName = DeleteCustomerGateway) || ($.eventName = AttachInternetGateway) || ($.eventName = CreateInternetGateway) || ($.eventName = DeleteInternetGateway) || ($.eventName = DetachInternetGateway) }",
         "MetricTransformations": [
           {
@@ -108,7 +108,7 @@
       "Properties": {
         "AlarmName": "CloudTrailGatewayChanges",
         "AlarmDescription": "Alarms when an API call is made to create, update or delete a Customer or Internet Gateway.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "GatewayEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -123,7 +123,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = CreateVpc) || ($.eventName = DeleteVpc) || ($.eventName = ModifyVpcAttribute) || ($.eventName = AcceptVpcPeeringConnection) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = DeleteVpcPeeringConnection) || ($.eventName = RejectVpcPeeringConnection) || ($.eventName = AttachClassicLinkVpc) || ($.eventName = DetachClassicLinkVpc) || ($.eventName = DisableVpcClassicLink) || ($.eventName = EnableVpcClassicLink) }",
         "MetricTransformations": [
           {
@@ -140,7 +140,7 @@
       "Properties": {
         "AlarmName": "CloudTrailVpcChanges",
         "AlarmDescription": "Alarms when an API call is made to create, update or delete a VPC, VPC peering connection or VPC connection to classic.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "VpcEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -155,7 +155,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = RunInstances) || ($.eventName = RebootInstances) || ($.eventName = StartInstances) || ($.eventName = StopInstances) || ($.eventName = TerminateInstances) }",
         "MetricTransformations": [
           {
@@ -172,7 +172,7 @@
       "Properties": {
         "AlarmName": "CloudTrailEC2InstanceChanges",
         "AlarmDescription": "Alarms when an API call is made to create, terminate, start, stop or reboot an EC2 instance.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "EC2InstanceEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -187,7 +187,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = RunInstances) && (($.requestParameters.instanceType = *.8xlarge) || ($.requestParameters.instanceType = *.4xlarge)) }",
         "MetricTransformations": [
           {
@@ -204,7 +204,7 @@
       "Properties": {
         "AlarmName": "CloudTrailEC2LargeInstanceChanges",
         "AlarmDescription": "Alarms when an API call is made to create, terminate, start, stop or reboot a 4x or 8x-large EC2 instance.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "EC2LargeInstanceEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -219,7 +219,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = CreateTrail) || ($.eventName = UpdateTrail) || ($.eventName = DeleteTrail) || ($.eventName = StartLogging) || ($.eventName = StopLogging) }",
         "MetricTransformations": [
           {
@@ -236,7 +236,7 @@
       "Properties": {
         "AlarmName": "CloudTrailChanges",
         "AlarmDescription": "Alarms when an API call is made to create, update or delete a CloudTrail trail, or to start or stop logging to a trail.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "CloudTrailEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -251,7 +251,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.eventName = ConsoleLogin) && ($.errorMessage = \"Failed authentication\") }",
         "MetricTransformations": [
           {
@@ -268,7 +268,7 @@
       "Properties": {
         "AlarmName": "CloudTrailConsoleSignInFailures",
         "AlarmDescription": "Alarms when an unauthenticated API call is made to sign into the console.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "ConsoleSignInFailureCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -283,7 +283,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{ ($.errorCode = \"*UnauthorizedOperation\") || ($.errorCode = \"AccessDenied*\") }",
         "MetricTransformations": [
           {
@@ -300,7 +300,7 @@
       "Properties": {
         "AlarmName": "CloudTrailAuthorizationFailures",
         "AlarmDescription": "Alarms when an unauthorized API call is made.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "AuthorizationFailureCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -316,7 +316,7 @@
       "DependsOn": ["LogGroup"],
       "Type": "AWS::Logs::MetricFilter",
       "Properties": {
-        "LogGroupName": { "Ref": "LogGroupName" },
+        "LogGroupName": {"Ref": "LogGroupName" },
         "FilterPattern": "{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}",
         "MetricTransformations": [
           {
@@ -332,7 +332,7 @@
       "Properties": {
         "AlarmName": "CloudTrailIAMPolicyChanges",
         "AlarmDescription": "Alarms when an API call is made to change an IAM policy.",
-        "AlarmActions": [{ "Ref": "AlarmNotificationTopic" }],
+        "AlarmActions": [{"Ref": "AlarmNotificationTopic" }],
         "MetricName": "IAMPolicyEventCount",
         "Namespace": "CloudTrailMetrics",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -348,7 +348,7 @@
       "Properties": {
         "Subscription": [
           {
-            "Endpoint": { "Ref": "Email" },
+            "Endpoint": {"Ref": "Email" },
             "Protocol": "email"
           }
         ]

@@ -5,13 +5,13 @@
 
   "Parameters": {
     "BucketName": {
-      "Type": "String",
       "Description": "Name of the S3 bucket.",
+      "Type": "String",
       "Default": "name-cloudtrail"
     },
     "TopicName": {
-      "Type": "String",
       "Description": "Name of the SNS topic.",
+      "Type": "String",
       "Default": "CloudTrail-SNS"
     }
   },
@@ -80,7 +80,7 @@
             {
               "Sid": "AWSCloudTrailSNSPolicy",
               "Effect": "Allow",
-              "Principal": { "Service":"cloudtrail.amazonaws.com"},
+              "Principal": {"Service":"cloudtrail.amazonaws.com"},
               "Action": [
                 "SNS:Publish"
               ],

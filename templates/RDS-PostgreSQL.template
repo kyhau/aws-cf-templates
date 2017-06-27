@@ -5,42 +5,26 @@
 
   "Parameters": {
     "DBVpc": {
-      "Type": "AWS::EC2::VPC::Id",
-      "Description": "The ID of the VPC for the DB / DB Sec group."
+      "Description": "The ID of the VPC for the DB / DB Sec group.",
+      "Type": "AWS::EC2::VPC::Id"
     },
     "DBAllowedCidrBlock": {
-      "Type": "String",
       "Description": "The Cidr block prefix (eg: 61.2) of the VPC for the DB / DB Sec group. Assumes (32.0/24 + 33.0/24) are free subnet blocks that will be created for Multi AZ RDS",
+      "Type": "String",
       "Default": "61.2",
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
       "MinLength": "3",
       "MaxLength": "7"
     },
     "DBSub1Zone": {
-      "Type": "String",
       "Description": "The availability zone for subnet 1 to create (must have 2 different zones for Multi AZ).",
-      "Default": "ap-southeast-2a",
-      "AllowedValues": [
-        "ap-southeast-2a",
-        "ap-southeast-2b",
-        "ap-southeast-2c",
-        "us-east-2a",
-        "us-east-2b",
-        "us-east-2c"
-      ]
+      "Type": "AWS::EC2::AvailabilityZone::Name",
+      "Default": "ap-southeast-2a"
     },
     "DBSub2Zone": {
-      "Type": "String",
       "Description": "The availability zone for subnet 1 to create (must have 2 different zones for Multi AZ).",
-      "Default": "ap-southeast-2b",
-      "AllowedValues": [
-        "ap-southeast-2a",
-        "ap-southeast-2b",
-        "ap-southeast-2c",
-        "us-east-2a",
-        "us-east-2b",
-        "us-east-2c"
-      ]
+      "Type": "AWS::EC2::AvailabilityZone::Name",
+      "Default": "ap-southeast-2b"
     },
     "DBName": {
       "Type": "String",
@@ -89,7 +73,7 @@
     "PSQLVPCSecGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "GroupDescription": { "Fn::Join": ["", ["VPC security group for RDS ", {"Ref": "DBName"}, "in VPC: ", {"Ref": "DBVpc"}]]},
+        "GroupDescription": {"Fn::Join": ["", ["VPC security group for RDS ", {"Ref": "DBName"}, "in VPC: ", {"Ref": "DBVpc"}]]},
         "VpcId": {"Ref": "DBVpc"},
         "SecurityGroupIngress": [
           {
@@ -170,11 +154,11 @@
   "Outputs": {
     "DBEndpoint": {
       "Description": "The DB endpoint for VPC accessible resources.",
-      "Value": { "Fn::GetAtt": ["PSQLGisDB", "Endpoint.Address"] }
+      "Value": {"Fn::GetAtt": ["PSQLGisDB", "Endpoint.Address"] }
     },
     "DBPort": {
       "Description": "The DB port for VPC accessible resources.",
-      "Value": { "Fn::GetAtt": ["PSQLGisDB", "Endpoint.Port"] }
+      "Value": {"Fn::GetAtt": ["PSQLGisDB", "Endpoint.Port"] }
     }
   }
 }

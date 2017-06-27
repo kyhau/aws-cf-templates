@@ -5,23 +5,23 @@
 
   "Parameters": {
     "BucketName": {
-      "Type": "String",
-      "Description": "The name of the S3 bucket to be created."
+      "Description": "The name of the S3 bucket to be created.",
+      "Type": "String"
     },
     "EnableVersioning": {
-      "Type": "String",
       "Description": "Enable versioning (Enabled or Suspended).",
+      "Type": "String",
       "AllowedValues": ["Enabled", "Suspended"],
       "Default": "Enabled"
     },
     "ReadOnlyGroupName": {
-      "Type": "String",
       "Description": "Optional. Name of the Group to be created and given Read-only access to the given bucket.",
+      "Type": "String",
       "Default":""
     },
     "ReadWriteDeleteGroupName": {
-      "Type": "String",
       "Description": "Optional. Name of the Group to be created and given Read-Write-Delete access to the given bucket.",
+      "Type": "String",
       "Default":""
     }
   },

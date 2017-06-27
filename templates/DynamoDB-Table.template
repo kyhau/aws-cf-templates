@@ -5,31 +5,31 @@
 
   "Parameters": {
     "PrimaryKeyAttributeName": {
-      "Type": "String",
-      "Description": "The name of an attribute. Attribute names can be 1 – 255 characters long and have no character restrictions."
+      "Description": "The name of an attribute. Attribute names can be 1 – 255 characters long and have no character restrictions.",
+      "Type": "String"
     },
     "PrimaryKeyAttributeType": {
-      "Type": "String",
-      "Description": "The data type for the attribute. You can specify S for string data, N for numeric data, or B for binary data."
+      "Description": "The data type for the attribute. You can specify S for string data, N for numeric data, or B for binary data.",
+      "Type": "String"
     },
     "PrimaryKeyType": {
-      "Type": "String",
       "Description": "Represents the attribute data, consisting of the data type and the attribute value itself. You can specify HASH or RANGE.",
+      "Type": "String",
       "Default": "HASH"
     },
     "ProvisionedThroughputReadCapacity": {
-      "Type": "Number",
       "Description": "Sets the desired minimum number of consistent reads of items (up to 1KB in size) per second for the specified table before Amazon DynamoDB balances the load.",
+      "Type": "Number",
       "Default": "5"
     },
     "ProvisionedThroughputWriteCapacity": {
-      "Type": "Number",
       "Description": "Sets the desired minimum number of consistent writes of items (up to 1KB in size) per second for the specified table before Amazon DynamoDB balances the load.",
+      "Type": "Number",
       "Default": "5"
     },
     "TableName": {
-      "Type": "String",
       "Description": "A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.",
+      "Type": "String",
       "Default": ""
     }
   },
@@ -39,21 +39,18 @@
     "DynamoDBTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": { "Ref": "TableName" },
-        "AttributeDefinitions": [
-            {
-                "AttributeName": { "Ref": "PrimaryKeyAttributeName" },
-                "AttributeType": { "Ref": "PrimaryKeyAttributeType" }
-            }],
-        "KeySchema": [
-            {
-                "AttributeName": { "Ref": "PrimaryKeyAttributeName" },
-                "KeyType": { "Ref": "PrimaryKeyType" }
-            }
-            ],
+        "TableName": {"Ref": "TableName" },
+        "AttributeDefinitions": [{
+          "AttributeName": {"Ref": "PrimaryKeyAttributeName" },
+          "AttributeType": {"Ref": "PrimaryKeyAttributeType" }
+        }],
+        "KeySchema": [{
+            "AttributeName": {"Ref": "PrimaryKeyAttributeName" },
+            "KeyType": {"Ref": "PrimaryKeyType" }
+        }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": { "Ref": "ProvisionedThroughputReadCapacity" },
-            "WriteCapacityUnits": { "Ref": "ProvisionedThroughputWriteCapacity" }
+          "ReadCapacityUnits": {"Ref": "ProvisionedThroughputReadCapacity" },
+          "WriteCapacityUnits": {"Ref": "ProvisionedThroughputWriteCapacity" }
         }
       }
     }

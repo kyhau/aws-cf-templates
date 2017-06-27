@@ -5,27 +5,26 @@
 
   "Parameters": {
     "TopicName": {
-      "Type": "String",
       "Description": "Name of the SNS topic.",
+      "Type": "String",
       "Default": "Inspector-EC2"
     },
     "SubscriptionEmail": {
-      "Type": "String",
-      "Description": "Email address for the Inspector finding subscription."
+      "Description": "Email address for the Inspector finding subscription.",
+      "Type": "String"
     },
     "InspectorRegionUserArn": {
-      "Type": "String",
-      "Description": "For the right ARN please see https://docs.aws.amazon.com/inspector/latest/userguide/inspector_assessments.html#sns-topic"
+      "Description": "For the right ARN please see https://docs.aws.amazon.com/inspector/latest/userguide/inspector_assessments.html#sns-topic",
+      "Type": "String"
     }
   },
 
   "Resources": {
-
     "SnsTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
-        "TopicName": { "Ref": "TopicName" },
-        "DisplayName": { "Ref": "TopicName" }
+        "TopicName": {"Ref": "TopicName" },
+        "DisplayName": {"Ref": "TopicName" }
       }
     },
 
@@ -42,7 +41,7 @@
       "Type": "AWS::SNS::TopicPolicy",
       "Properties": {
         "Topics": [
-          { "Ref": "SnsTopic" }
+          {"Ref": "SnsTopic" }
         ],
         "PolicyDocument": {
 
@@ -68,7 +67,7 @@
               ],
               "Resource": {"Ref": "SnsTopic"},
               "Condition": {
-                "StringEquals": { "AWS:SourceOwner": { "Ref": "AWS::AccountId" } }
+                "StringEquals": {"AWS:SourceOwner": {"Ref": "AWS::AccountId" } }
               }
             },
             {

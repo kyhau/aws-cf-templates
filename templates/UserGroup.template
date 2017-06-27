@@ -11,7 +11,7 @@
       "Type": "AWS::IAM::UserToGroupAddition",
       "DependsOn": "NewGroup",
       "Properties": {
-        "GroupName": { "Ref": "NewGroup" },
+        "GroupName": {"Ref": "NewGroup" },
         "Users": [
           "firstname.lastname"
         ]

@@ -5,22 +5,22 @@
 
   "Parameters": {
     "ProjectTag": {
+      "Description": "Project tag to be used for tagging related sources (e.g. 60-11-xxxx).",
       "Type": "String",
-      "Description": "Project tag to be used for tagging related sources (e.g. 61-11-xxxx).",
-      "Default": "61-11-xxxx"
+      "Default": "60-11-xxxx"
     },
     "VpcCIDRFirst2Parts": {
+      "Description": "The first 2 parts of the CIDR (e.g. 60.11) to be assigned to the VPC.",
       "Type": "String",
-      "Description": "The first 2 parts of the CIDR (e.g. 61.11) to be assigned to the VPC.",
       "MinLength": "3",
       "MaxLength": "7",
-      "Default": "61.11",
+      "Default": "60.11",
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
       "ConstraintDescription": "must be in the form x.x"
     },
     "VpcSubnetZone": {
-      "Type": "AWS::EC2::AvailabilityZone::Name",
       "Description": "The Availability Zone of the default subnet.",
+      "Type": "AWS::EC2::AvailabilityZone::Name",
       "Default": "ap-southeast-2a"
     }
   },
@@ -29,13 +29,13 @@
     "ProjectVpc": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
-        "CidrBlock": { "Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/16"]]},
+        "CidrBlock": {"Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/16"]]},
         "InstanceTenancy": "default",
         "EnableDnsSupport": "true",
         "EnableDnsHostnames": "true",
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "ProjectTag" } }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name", "Value": {"Ref": "ProjectTag" } }
         ]
       }
     },
@@ -43,20 +43,20 @@
     "ProjectSubnetA": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
-        "CidrBlock": { "Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/20"]]},
-        "AvailabilityZone": { "Ref": "VpcSubnetZone" },
-        "VpcId": { "Ref": "ProjectVpc" },
+        "CidrBlock": {"Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/20"]]},
+        "AvailabilityZone": {"Ref": "VpcSubnetZone" },
+        "VpcId": {"Ref": "ProjectVpc" },
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Fn::Join": ["-", [{"Ref": "ProjectTag"}, {"Ref": "VpcSubnetZone"}]]} }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name", "Value": {"Fn::Join": ["-", [{"Ref": "ProjectTag"}, {"Ref": "VpcSubnetZone"}]]} }
         ]
       }
     },
     "ProjectSubnetAclA": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
-        "NetworkAclId": { "Ref": "ProjectNetworkAcl" },
-        "SubnetId": { "Ref": "ProjectSubnetA" }
+        "NetworkAclId": {"Ref": "ProjectNetworkAcl" },
+        "SubnetId": {"Ref": "ProjectSubnetA" }
       }
     },
 
@@ -65,16 +65,16 @@
       "Type": "AWS::EC2::InternetGateway",
       "Properties": {
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "ProjectTag" } }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name", "Value": {"Ref": "ProjectTag" } }
         ]
       }
     },
     "ProjectGatewayAttachment1": {
       "Type": "AWS::EC2::VPCGatewayAttachment",
       "Properties": {
-        "VpcId": { "Ref": "ProjectVpc" },
-        "InternetGatewayId": { "Ref": "ProjectInternetGateway" }
+        "VpcId": {"Ref": "ProjectVpc" },
+        "InternetGatewayId": {"Ref": "ProjectInternetGateway" }
       }
     },
 
@@ -83,18 +83,18 @@
       "Type": "AWS::EC2::DHCPOptions",
       "Properties": {
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "ProjectTag" } }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name", "Value": {"Ref": "ProjectTag" } }
         ],
-        "DomainName": { "Fn::Join": ["", [{"Ref": "AWS::Region"}, ".compute.internal"]]},
+        "DomainName": {"Fn::Join": ["", [{"Ref": "AWS::Region"}, ".compute.internal"]]},
         "DomainNameServers": [ "AmazonProvidedDNS" ]
       }
     },
     "ProjectVpcDhcpOptionsAssociation1": {
       "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
       "Properties": {
-        "VpcId": { "Ref": "ProjectVpc" },
-        "DhcpOptionsId": { "Ref": "ProjectDopt" }
+        "VpcId": {"Ref": "ProjectVpc" },
+        "DhcpOptionsId": {"Ref": "ProjectDopt" }
       }
     },
 
@@ -102,10 +102,10 @@
     "ProjectNetworkAcl": {
       "Type": "AWS::EC2::NetworkAcl",
       "Properties": {
-        "VpcId": { "Ref": "ProjectVpc" },
+        "VpcId": {"Ref": "ProjectVpc" },
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name", "Value": { "Ref": "ProjectTag" } }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name", "Value": {"Ref": "ProjectTag" } }
         ]
       }
     },
@@ -117,7 +117,7 @@
         "Protocol": "-1",
         "RuleAction": "allow",
         "RuleNumber": "100",
-        "NetworkAclId": { "Ref": "ProjectNetworkAcl" }
+        "NetworkAclId": {"Ref": "ProjectNetworkAcl" }
       }
     },
     "ProjectNetworkAclEntry2": {
@@ -127,7 +127,7 @@
         "Protocol": "-1",
         "RuleAction": "allow",
         "RuleNumber": "100",
-        "NetworkAclId": { "Ref": "ProjectNetworkAcl" }
+        "NetworkAclId": {"Ref": "ProjectNetworkAcl" }
       }
     },
 
@@ -135,10 +135,10 @@
     "ProjectRouteTable": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
-        "VpcId": { "Ref": "ProjectVpc" },
+        "VpcId": {"Ref": "ProjectVpc" },
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Ref": "ProjectTag" } }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name",  "Value": {"Ref": "ProjectTag" } }
         ]
       }
     },
@@ -147,8 +147,8 @@
       "DependsOn": "ProjectGatewayAttachment1",
       "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "RouteTableId": { "Ref": "ProjectRouteTable" },
-        "GatewayId": { "Ref": "ProjectInternetGateway" }
+        "RouteTableId": {"Ref": "ProjectRouteTable" },
+        "GatewayId": {"Ref": "ProjectInternetGateway" }
       }
     },
 
@@ -156,8 +156,8 @@
     "ProjectSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
-        "RouteTableId": { "Ref": "ProjectRouteTable" },
-        "SubnetId": { "Ref": "ProjectSubnetA" }
+        "RouteTableId": {"Ref": "ProjectRouteTable" },
+        "SubnetId": {"Ref": "ProjectSubnetA" }
       }
     },
 
@@ -165,48 +165,48 @@
     "VMSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "VpcId": { "Ref": "ProjectVpc" },
-        "GroupDescription": { "Ref": "ProjectTag" },
+        "VpcId": {"Ref": "ProjectVpc" },
+        "GroupDescription": {"Ref": "ProjectTag" },
         "SecurityGroupIngress": [
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/16"]]} }
+          {"IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": {"Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/16"]]} }
         ],
         "SecurityGroupEgress": [
-          { "IpProtocol": "-1", "CidrIp": "0.0.0.0/0" }
+          {"IpProtocol": "-1", "CidrIp": "0.0.0.0/0" }
         ],
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Ref": "ProjectTag" } }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name",  "Value": {"Ref": "ProjectTag" } }
         ]
       }
     },
     "SgIngress1": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "GroupId": { "Ref": "VMSecurityGroup" },
+        "GroupId": {"Ref": "VMSecurityGroup" },
         "IpProtocol": "-1",
-        "SourceSecurityGroupId": { "Ref": "VMSecurityGroup" } ,
-        "SourceSecurityGroupOwnerId": { "Ref": "AWS::AccountId" }
+        "SourceSecurityGroupId": {"Ref": "VMSecurityGroup" } ,
+        "SourceSecurityGroupOwnerId": {"Ref": "AWS::AccountId" }
       }
     },
 
     "VpnSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "VpcId": { "Ref": "ProjectVpc" },
+        "VpcId": {"Ref": "ProjectVpc" },
         "GroupDescription": "Security group for OpenVPN Server",
         "SecurityGroupIngress": [
-          { "IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": { "Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/20"]]} },
-          { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
-          { "IpProtocol": "tcp", "FromPort": "943", "ToPort": "943", "CidrIp": "0.0.0.0/0" }
+          {"IpProtocol": "icmp", "FromPort": "0", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
+          {"IpProtocol": "icmp", "FromPort": "8", "ToPort": "-1", "CidrIp": "0.0.0.0/0" },
+          {"IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": {"Fn::Join": ["", [{"Ref": "VpcCIDRFirst2Parts"}, ".0.0/20"]]} },
+          {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" },
+          {"IpProtocol": "tcp", "FromPort": "943", "ToPort": "943", "CidrIp": "0.0.0.0/0" }
         ],
         "SecurityGroupEgress": [
-          { "IpProtocol": "-1", "CidrIp": "0.0.0.0/0" }
+          {"IpProtocol": "-1", "CidrIp": "0.0.0.0/0" }
         ],
         "Tags": [
-          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
-          { "Key": "Name",  "Value": { "Fn::Join": ["-", ["openvpn", {"Ref": "ProjectTag"}]]} }
+          {"Key": "Application", "Value": {"Ref": "AWS::StackName" } },
+          {"Key": "Name",  "Value": {"Fn::Join": ["-", ["openvpn", {"Ref": "ProjectTag"}]]} }
         ]
       }
     }

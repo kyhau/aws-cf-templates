@@ -5,28 +5,28 @@
 
   "Parameters": {
     "BucketName": {
-      "Type": "String",
-      "Description": "The name of the S3 bucket for static website hosting."
+      "Description": "The name of the S3 bucket for static website hosting.",
+      "Type": "String"
     },
     "IndexDoc": {
-      "Type": "String",
       "Description": "The file name of the index document.",
+      "Type": "String",
       "Default": "index.html"
     },
     "EnableVersioning": {
-      "Type": "String",
       "Description": "Enable versioning (Enabled or Suspended).",
+      "Type": "String",
       "AllowedValues": ["Enabled", "Suspended"],
       "Default": "Enabled"
     },
     "ErrorDoc": {
-      "Type": "String",
       "Description": "The file name of the error document.",
+      "Type": "String",
       "Default": "error.html"
     },
     "ReadWriteDeleteGroupName": {
-      "Type": "String",
       "Description": "Optional. Name of the Group to be given Read-Write-Delete access to the given bucket.",
+      "Type": "String",
       "Default":""
     }
   },
@@ -41,8 +41,8 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "AccessControl": "LogDeliveryWrite",
-        "BucketName": { "Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
-        "VersioningConfiguration": { "Status": "Suspended" }
+        "BucketName": {"Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
+        "VersioningConfiguration": {"Status": "Suspended" }
       }
     },
 
@@ -57,9 +57,9 @@
           "ErrorDocument": {"Ref": "ErrorDoc"}
         },
         "LoggingConfiguration": {
-          "DestinationBucketName": { "Ref": "S3BucketLogs" }
+          "DestinationBucketName": {"Ref": "S3BucketLogs" }
         },
-        "VersioningConfiguration": { "Status": {"Ref": "EnableVersioning"} }
+        "VersioningConfiguration": {"Status": {"Ref": "EnableVersioning"} }
       },
       "DeletionPolicy": "Retain"
     },
@@ -68,14 +68,14 @@
       "Type": "AWS::S3::BucketPolicy",
       "DependsOn": ["S3Bucket"],
       "Properties": {
-        "Bucket": { "Ref": "BucketName" },
+        "Bucket": {"Ref": "BucketName" },
         "PolicyDocument": {
           "Statement": [
             {
               "Sid": "PublicReadForGetBucketObjects",
               "Action": ["s3:GetObject"],
               "Effect": "Allow",
-              "Resource": { "Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]] },
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]] },
               "Principal": "*"
             }
           ]
@@ -106,17 +106,17 @@
             {
               "Effect": "Allow",
               "Action": [ "s3:ListBucket", "s3:GetBucketLocation" ],
-              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" } ] ] }
+              "Resource": {"Fn::Join": [ "", [ "arn:aws:s3:::", {"Ref": "BucketName" } ] ] }
             },
             {
               "Effect": "Allow",
               "Action": [ "s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
-              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" }, "/*" ] ] }
+              "Resource": {"Fn::Join": [ "", [ "arn:aws:s3:::", {"Ref": "BucketName" }, "/*" ] ] }
             }
           ]
         },
         "Groups": [
-          { "Ref": "ReadWriteDeleteGroupName" }
+          {"Ref": "ReadWriteDeleteGroupName" }
         ]
       }
     }
@@ -124,11 +124,11 @@
 
   "Outputs": {
     "WebsiteURL": {
-      "Value": { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] },
+      "Value": {"Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] },
       "Description": "URL for website hosted on S3"
     },
     "S3BucketSecureURL": {
-      "Value": { "Fn::Join": [ "", [ "https://", { "Fn::GetAtt": [ "S3Bucket", "DomainName" ] } ] ] },
+      "Value": {"Fn::Join": [ "", [ "https://", {"Fn::GetAtt": [ "S3Bucket", "DomainName" ] } ] ] },
       "Description": "Name of S3 bucket to hold website content"
     }
   }

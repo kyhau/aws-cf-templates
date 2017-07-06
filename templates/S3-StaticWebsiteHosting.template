@@ -13,11 +13,17 @@
       "Type": "String",
       "Default": "index.html"
     },
+    "EnableLogging": {
+      "Description": "Enable logging.",
+      "Type": "String",
+      "AllowedValues": ["Enabled", "Suspended"],
+      "Default": "Suspended"
+    },
     "EnableVersioning": {
       "Description": "Enable versioning (Enabled or Suspended).",
       "Type": "String",
       "AllowedValues": ["Enabled", "Suspended"],
-      "Default": "Enabled"
+      "Default": "Suspended"
     },
     "ErrorDoc": {
       "Description": "The file name of the error document.",
@@ -32,6 +38,7 @@
   },
 
   "Conditions": {
+    "LoggingEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableLogging"}]},
     "VersioningEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableVersioning"}]},
     "ReadWriteDeleteGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadWriteDeleteGroupName"}]}]}
   },
@@ -39,16 +46,16 @@
   "Resources": {
     "S3BucketLogs": {
       "Type": "AWS::S3::Bucket",
+      "Condition": "LoggingEnabled",
       "Properties": {
         "AccessControl": "LogDeliveryWrite",
         "BucketName": {"Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
-        "VersioningConfiguration": {"Status": "Suspended" }
+        "VersioningConfiguration": {"Status": "Suspended"}
       }
     },
 
     "S3Bucket": {
       "Type": "AWS::S3::Bucket",
-      "DependsOn": ["S3BucketLogs"],
       "Properties": {
         "BucketName": {"Ref":"BucketName"},
         "AccessControl": "PublicRead",
@@ -57,28 +64,32 @@
           "ErrorDocument": {"Ref": "ErrorDoc"}
         },
         "LoggingConfiguration": {
-          "DestinationBucketName": {"Ref": "S3BucketLogs" }
+          "Fn::If" : [
+            "LoggingEnabled", 
+            {"DestinationBucketName": {"Ref": "S3BucketLogs"}}, 
+            {"Ref": "AWS::NoValue"}
+          ]
         },
-        "VersioningConfiguration": {"Status": {"Ref": "EnableVersioning"} }
+        "VersioningConfiguration": {"Status": {"Ref": "EnableVersioning"}}
       },
-      "DeletionPolicy": "Retain"
+      "DeletionPolicy": "Delete"
     },
 
     "S3BucketPolicy": {
       "Type": "AWS::S3::BucketPolicy",
       "DependsOn": ["S3Bucket"],
       "Properties": {
-        "Bucket": {"Ref": "BucketName" },
+        "Bucket": {"Ref": "BucketName"},
         "PolicyDocument": {
           "Statement": [
             {
               "Sid": "PublicReadForGetBucketObjects",
               "Action": ["s3:GetObject"],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]] },
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]]},
               "Principal": "*"
             }
-          ]
+         ]
         }
       }
     },
@@ -92,8 +103,7 @@
     },
     "ManagedPolicyS3": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "Condition": "ReadWriteDeleteGroupNameSpecified",
-      "DependsOn": ["S3Bucket", "IamGroupReadWriteDelete"],
+      "DependsOn": ["S3Bucket"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument": {
@@ -101,35 +111,39 @@
           "Statement": [
             {
               "Effect": "Allow",
-              "Action": [ "s3:ListAllMyBuckets" ],
-              "Resource": "arn:aws:s3:::*" },
+              "Action": ["s3:ListAllMyBuckets"],
+              "Resource": "arn:aws:s3:::*"},
             {
               "Effect": "Allow",
-              "Action": [ "s3:ListBucket", "s3:GetBucketLocation" ],
-              "Resource": {"Fn::Join": [ "", [ "arn:aws:s3:::", {"Ref": "BucketName" } ] ] }
+              "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}]]}
             },
             {
               "Effect": "Allow",
-              "Action": [ "s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
-              "Resource": {"Fn::Join": [ "", [ "arn:aws:s3:::", {"Ref": "BucketName" }, "/*" ] ] }
+              "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]]}
             }
-          ]
+         ]
         },
-        "Groups": [
-          {"Ref": "ReadWriteDeleteGroupName" }
-        ]
+        "Groups": [{
+          "Fn::If" : [
+            "ReadWriteDeleteGroupNameSpecified",
+            {"Ref": "ReadWriteDeleteGroupName"},
+            {"Ref": "AWS::NoValue"}
+          ]
+        }]
       }
     }
   },
 
   "Outputs": {
     "WebsiteURL": {
-      "Value": {"Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] },
-      "Description": "URL for website hosted on S3"
+      "Description": "URL for website hosted on S3",
+      "Value": {"Fn::GetAtt": ["S3Bucket", "WebsiteURL"]}
     },
     "S3BucketSecureURL": {
-      "Value": {"Fn::Join": [ "", [ "https://", {"Fn::GetAtt": [ "S3Bucket", "DomainName" ] } ] ] },
-      "Description": "Name of S3 bucket to hold website content"
+      "Description": "Name of S3 bucket to hold website content",
+      "Value": {"Fn::Join": ["", ["https://", {"Fn::GetAtt": ["S3Bucket", "DomainName"]}]]}
     }
   }
 }

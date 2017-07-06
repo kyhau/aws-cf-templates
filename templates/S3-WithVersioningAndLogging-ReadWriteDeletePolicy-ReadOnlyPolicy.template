@@ -8,51 +8,61 @@
       "Description": "The name of the S3 bucket to be created.",
       "Type": "String"
     },
+    "EnableLogging": {
+      "Description": "Enable logging.",
+      "Type": "String",
+      "AllowedValues": ["Enabled", "Suspended"],
+      "Default": "Suspended"
+    },
     "EnableVersioning": {
       "Description": "Enable versioning (Enabled or Suspended).",
       "Type": "String",
       "AllowedValues": ["Enabled", "Suspended"],
-      "Default": "Enabled"
+      "Default": "Suspended"
     },
     "ReadOnlyGroupName": {
       "Description": "Optional. Name of the Group to be created and given Read-only access to the given bucket.",
       "Type": "String",
-      "Default":""
+      "Default": ""
     },
     "ReadWriteDeleteGroupName": {
       "Description": "Optional. Name of the Group to be created and given Read-Write-Delete access to the given bucket.",
       "Type": "String",
-      "Default":""
+      "Default": ""
     }
   },
 
   "Conditions": {
+    "LoggingEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableLogging"}]},
     "VersioningEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableVersioning"}]},
     "ReadOnlyGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadOnlyGroupName"}]}]},
     "ReadWriteDeleteGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadWriteDeleteGroupName"}]}]}
   },
 
   "Resources": {
-
     "S3BucketLogs": {
       "Type": "AWS::S3::Bucket",
+      "Condition": "LoggingEnabled",
       "Properties": {
         "AccessControl": "LogDeliveryWrite",
-        "BucketName": { "Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
-        "VersioningConfiguration": { "Status": "Suspended" }
+        "BucketName": {"Fn::Join": ["-", [{"Ref": "BucketName"}, "logs"]]},
+        "VersioningConfiguration": {"Status": "Suspended"}
       }
     },
 
     "S3Bucket": {
       "Type": "AWS::S3::Bucket",
-      "DependsOn": ["S3BucketLogs"],
       "Properties": {
         "BucketName": {"Ref":"BucketName"},
         "AccessControl": "BucketOwnerFullControl",
         "LoggingConfiguration": {
-          "DestinationBucketName": { "Ref": "S3BucketLogs" }
+          "Fn::If" : [
+            "LoggingEnabled",
+            {"DestinationBucketName": {"Ref": "S3BucketLogs"}},
+            {"Ref": "AWS::NoValue"}
+          ]
         },
-        "VersioningConfiguration": { "Status": {"Ref": "EnableVersioning"} }
+        "VersioningConfiguration": {"Status": {"Ref": "EnableVersioning"}}
       },
       "DeletionPolicy": "Retain"
     },
@@ -66,8 +76,7 @@
     },
     "ManagedPolicyS3ReadWriteDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "Condition": "ReadWriteDeleteGroupNameSpecified",
-      "DependsOn": ["S3Bucket", "IamGroupReadWriteDelete"],
+      "DependsOn": ["S3Bucket"],
       "Properties": {
         "Description": "Managed Policy for accessing S3 bucket (read/write/delete)",
         "PolicyDocument": {
@@ -75,23 +84,27 @@
           "Statement": [
             {
               "Effect": "Allow",
-              "Action": [ "s3:ListAllMyBuckets" ],
-              "Resource": "arn:aws:s3:::*" },
+              "Action": ["s3:ListAllMyBuckets" ],
+              "Resource": "arn:aws:s3:::*"},
             {
               "Effect": "Allow",
-              "Action": [ "s3:ListBucket", "s3:GetBucketLocation" ],
-              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" } ] ] }
+              "Action": ["s3:ListBucket", "s3:GetBucketLocation" ],
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}]]}
             },
             {
               "Effect": "Allow",
-              "Action": [ "s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
-              "Resource": { "Fn::Join": [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" }, "/*" ] ] }
+              "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "BucketName"}, "/*"]]}
             }
           ]
         },
-        "Groups": [
-          { "Ref": "ReadWriteDeleteGroupName" }
-        ]
+        "Groups": [{
+          "Fn::If" : [
+            "ReadWriteDeleteGroupNameSpecified",
+            {"Ref": "ReadWriteDeleteGroupName"},
+            {"Ref": "AWS::NoValue"}
+          ]
+        }]
       }
     },
 
@@ -131,9 +144,13 @@
             }
           ]
         },
-        "Groups": [
-          { "Ref": "ReadOnlyGroupName" }
-        ]
+        "Groups": [{
+          "Fn::If" : [
+            "ReadOnlyGroupNameSpecified",
+            {"Ref": "ReadOnlyGroupName"},
+            {"Ref": "AWS::NoValue"}
+          ]
+        }]
       }
     }
   }

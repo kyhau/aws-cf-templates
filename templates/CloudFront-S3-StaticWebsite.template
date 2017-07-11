@@ -42,7 +42,8 @@
       "Description": "The minimum amount of time that you want objects to stay in the cache before CloudFront queries your origin to see whether the object has been updated.",
       "Type": "String",
       "Default": "0"
-    },    "StageName": {
+    },
+    "StageName": {
       "Description": "Stage name of the site. See Mappings defined in the template for the bucket name and the website url.",
       "Type": "String",
       "AllowedValues": ["stage", "prod"],
@@ -51,7 +52,7 @@
   },
 
   "Mappings": {
-    "StageMap": {
+    "Defaults": {
       "prod": {
         "BillingTag": "Website-prod",
         "CloudFrontAlias": "website-prod.example.com",
@@ -81,8 +82,8 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "AccessControl": "LogDeliveryWrite",
-        "BucketName": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "LogBucketName"]},
-        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "BillingTag"]}}]
+        "BucketName": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "LogBucketName"]},
+        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "BillingTag"]}}]
       },
       "DeletionPolicy": "Delete"
     },
@@ -91,7 +92,7 @@
       "Type": "AWS::S3::Bucket",
       "DependsOn": ["LogBucket"],
       "Properties": {
-        "BucketName": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]},
+        "BucketName": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]},
         "AccessControl": "PublicRead",
         "WebsiteConfiguration": {
           "IndexDocument": {"Ref":"IndexDoc"},
@@ -101,7 +102,7 @@
           "DestinationBucketName": {"Ref":"LogBucket"}
         },
         "VersioningConfiguration": {"Status": "Suspended"},
-        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "BillingTag"]}}]
+        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "BillingTag"]}}]
       },
       "DeletionPolicy": "Delete"
     },
@@ -117,15 +118,15 @@
               "Effect": "Allow",
               "Principal": "*",
               "Action": "s3:GetObject",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]}
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]}
             },
             {
               "Sid": "CloudFrontOriginAccess",
               "Action": ["s3:GetObject"],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]},
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]},
               "Principal": {
-                "AWS": {"Fn::Join": ["", ["arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontOAI"]}]]}
+                "AWS": {"Fn::Join": ["", ["arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "CloudFrontOAI"]}]]}
               }
             }
           ]
@@ -143,12 +144,12 @@
             {
               "Action": ["s3:ListBucket" ],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]}
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}]]}
             },
             {
               "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, "/*" ]]}
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, "/*" ]]}
             },
             {
               "Action": ["CloudFront:CreateInvalidation"],
@@ -167,9 +168,9 @@
       "Type": "AWS::CloudFront::Distribution",
       "Properties": {
         "DistributionConfig": {
-          "Aliases": [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontAlias"]}],
+          "Aliases": [{"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "CloudFrontAlias"]}],
           "DefaultCacheBehavior": {
-            "TargetOriginId": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]},
+            "TargetOriginId": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}]]},
             "ViewerProtocolPolicy": "redirect-to-https",
             "AllowedMethods": ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"],
             "ForwardedValues": {"QueryString": false},
@@ -182,12 +183,12 @@
           "Enabled": true,
           "Logging": {
             "IncludeCookies": "false",
-            "Bucket": {"Fn::Join": ["", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "LogBucketName"]}, ".s3.amazonaws.com"]]},
+            "Bucket": {"Fn::Join": ["", [{"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "LogBucketName"]}, ".s3.amazonaws.com"]]},
             "Prefix": "cf"
           },
           "Origins": [{
-            "DomainName": {"Fn::Join": ["", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, ".s3-website-", {"Ref": "AWS::Region"}, ".amazonaws.com"]]},
-            "Id": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]},
+            "DomainName": {"Fn::Join": ["", [{"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, ".s3-website-", {"Ref": "AWS::Region"}, ".amazonaws.com"]]},
+            "Id": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}]]},
             "CustomOriginConfig": {
               "OriginProtocolPolicy": "http-only"
             }

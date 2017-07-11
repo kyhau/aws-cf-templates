@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Create Group and Policy for Development team to access Cognito related resources.",
+  "Description": "Create Group and Policy for accessing Cognito related resources.",
 
   "Parameters": {
     "IdentityPoolArn": {
@@ -18,7 +18,7 @@
     "CognitoAdmins": {
       "Type": "AWS::IAM::Group"
     },
-    "MagnumCognitoAdminPolicy": {
+    "CognitoAdminPolicy": {
       "Type": "AWS::IAM::ManagedPolicy",
       "DependsOn": "CognitoAdmins",
       "Properties": {
@@ -45,8 +45,8 @@
                 "sns:ListPlatformApplications"
               ],
               "Resource": [
-                { "Ref": "IdentityPoolArn" },
-                { "Ref": "UserPoolArn" }
+                {"Ref": "IdentityPoolArn"},
+                {"Ref": "UserPoolArn"}
               ]
             },
             {
@@ -59,14 +59,14 @@
                 "cognito-sync:DeleteDataset"
               ],
               "Resource": [
-                { "Ref": "IdentityPoolArn" },
-                { "Ref": "UserPoolArn" }
+                {"Ref": "IdentityPoolArn"},
+                {"Ref": "UserPoolArn"}
               ]
             }
           ]
         },
         "Groups": [
-          { "Ref": "CognitoAdmins" }
+          {"Ref": "CognitoAdmins"}
         ]
       }
     }

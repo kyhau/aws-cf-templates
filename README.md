@@ -156,6 +156,9 @@ with the software or the use or other dealings in the software.
 
 ## Templates for Cognito
 
+1. `Cognito.template`
+    - Create Cognito User Pool, Identity Pool, User Pool Clients and a DynamoDB for login trail.
+    
 1. `Cognito-Dev-GroupAndPolicy.template`
     - Create Group and Policy for Development team to access Cognito related resources.
 

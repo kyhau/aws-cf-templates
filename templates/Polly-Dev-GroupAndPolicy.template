@@ -15,11 +15,11 @@
     "PollyDevGroup": {
       "Type": "AWS::IAM::Group",
       "Properties": {
-        "GroupName": { "Ref": "PollyDevGroupName" }
+        "GroupName": {"Ref": "PollyDevGroupName"}
       }
     },
 
-    "ManagedPolicyPollyAllowAllActionsExceptDenyDelete": {
+    "PollyAllowAllActionsExceptDenyDelete": {
       "Type": "AWS::IAM::ManagedPolicy",
       "DependsOn": ["PollyDevGroup"],
       "Properties": {
@@ -49,9 +49,7 @@
             }
           ]
         },
-        "Groups": [
-          { "Ref": "PollyDevGroup" }
-        ]
+        "Groups": [{"Ref": "PollyDevGroup"}]
       }
     }
   }

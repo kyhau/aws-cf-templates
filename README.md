@@ -148,10 +148,11 @@ with the software or the use or other dealings in the software.
     1. Use the actual hosting domain name, e.g. “mywebsite.s3-website-us-east-1.amazonaws.com”.
 
 1. `S3-StaticWebsiteHosting.template`
-    - Create S3 bucket with Static Website, Versioning and Logging enabled.
-    - Create S3 bucket for logging.
+    - Create S3 bucket with Static Website
+    - Enable Versioning (optional).
+    - Enable Logging and create S3 bucket for logging (optional).
     - Create Bucket Policy for PublicRead access.
-    - Create a Managed Policy for managing and uploading files to the S3 bucket.
+    - Create Managed Policy for managing and uploading files to the S3 bucket.
     - Attach the Managed Policy to the given Group.
 
 ## Templates for Cognito

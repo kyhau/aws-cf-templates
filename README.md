@@ -91,6 +91,14 @@ with the software or the use or other dealings in the software.
 1. `Lambda-CreateUpdatePolicies.template`
     - Create Managed Policy for creating and updating Lambda function.
 
+## Templates for create API Gateway and Lambda function with dummy content, create Managed Policies for CI to update and deploy the API Gateway and the Lambda function.
+
+1. `ApiGatewayInit-LambdaInit-andPolicies.template`
+    - Create API Gateway with dummy content as a placeholder; the real content will be deployed by CI.
+    - Create Lambda function with dummy content as a placeholder; the real function will be deployed by CI.
+    - Create Managed Policy for updating and deploying Lambda function.
+    - Create Managed Policy for updating and deploying Lambda function.
+
 ## Templates for S3 management
 
 1. `BN-S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`

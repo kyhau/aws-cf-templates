@@ -18,6 +18,7 @@ with the software or the use or other dealings in the software.
 - [Scripts to manage templates](#scripts-to-manage-templates)
 - [Templates for creating EC2 and VPC aws resources](#templates-for-creating-ec2-and-vpc-aws-resources)
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
+- [Templates for API Gateway and Lambda function](#templates-for-api-gateway-and-lambda-function)
 - [Templates for S3 management](#templates-for-s3-management)
 - [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
 - [Templates for Cognito](#templates-for-cognito)
@@ -91,7 +92,7 @@ with the software or the use or other dealings in the software.
 1. `Lambda-CreateUpdatePolicies.template`
     - Create Managed Policy for creating and updating Lambda function.
 
-## Templates for create API Gateway and Lambda function with dummy content, create Managed Policies for CI to update and deploy the API Gateway and the Lambda function.
+## Templates for API Gateway and Lambda function
 
 1. `ApiGatewayInit-LambdaInit-andPolicies.template`
     - Create API Gateway with dummy content as a placeholder; the real content will be deployed by CI.

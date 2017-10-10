@@ -4,32 +4,34 @@
   "Description": "Create Cognito User Pool, Identity Pool, User Pool Clients and a DynamoDB for login trail.",
 
   "Parameters": {
-    "Stage": {
-      "Description": "The deployment stage.",
+    "IdentityPoolName": {
+      "Description": "The name of your Amazon Cognito identity pool.",
       "Type": "String",
-      "AllowedValues": ["prod", "test"],
-      "Default": "prod"
-    }
-  },
-  
-  "Mappings": {
-    "Defaults": {
-      "prod": {
-        "IdentityPoolName": "ProdIdentityPool",
-        "UserPoolName": "ProdUserPool",
-        "LoginTrailTableName": "ProdCognitoLoginTrail",
-        "ReplyToEmailAddress": "noreply@example.com",
-        "AppClientName": "AppUI",
-        "AppClientRefreshTokenValidity": "30"
-      },
-      "test": {
-        "IdentityPoolName": "TestIdentityPool",
-        "UserPoolName": "TestUserPool",
-        "LoginTrailTableName": "TestCognitoLoginTrail",
-        "ReplyToEmailAddress": "noreply+test@example.com",
-        "AppClientName": "AppUI",
-        "AppClientRefreshTokenValidity": "30"
-      }
+      "Default": "CognitoAlphaIdentityPool"
+    },
+    "UserPoolName": {
+      "Description": "The name of your Amazon Cognito user pool.",
+      "Type": "String",
+      "Default": "CognitoAlphaUserPool"
+    },
+    "LoginTrailTableName": {
+      "Description": "The name of your DynamoDB Table for recording login activities.",
+      "Type": "String",
+      "Default": "CognitoAlphaLoginTrail"
+    },
+    "ReplyToEmailAddress": {
+      "Description": "The REPLY-TO email address.",
+      "Type": "String"
+    },
+    "AppClientName": {
+      "Description": "The client name for the user pool client",
+      "Type": "String",
+      "Default": "CognitoAlphaClient"
+    },
+    "AppClientRefreshTokenValidity": {
+      "Description": "The time limit, in days, after which the refresh token is no longer valid.",
+      "Type": "Number",
+      "Default": 30
     }
   },
 
@@ -37,7 +39,7 @@
     "UserPool": {
       "Type": "AWS::Cognito::UserPool",
       "Properties": {
-        "UserPoolName": {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "UserPoolName"]},
+        "UserPoolName": {"Ref": "UserPoolName"},
         "AliasAttributes": [],
         "AutoVerifiedAttributes": ["email"],
         "Schema": [
@@ -46,7 +48,7 @@
             "AttributeDataType": "String",
             "DeveloperOnlyAttribute": false,
             "Mutable": true,
-            "StringAttributeConstraints": {"MaxLength": "256", "MinLength": "2"},
+            "StringAttributeConstraints": {"MaxLength": "2048", "MinLength": "5"},
             "Required": true
           },
           {
@@ -54,39 +56,31 @@
             "AttributeDataType": "String",
             "DeveloperOnlyAttribute": false,
             "Mutable": true,
-            "StringAttributeConstraints": {"MaxLength": "256", "MinLength": "1"},
-            "Required": true
+            "StringAttributeConstraints": {"MaxLength": "2048", "MinLength": "1"},
+            "Required": false
           },
           {
             "Name": "given_name",
             "AttributeDataType": "String",
             "DeveloperOnlyAttribute": false,
             "Mutable": true,
-            "StringAttributeConstraints": {"MaxLength": "256", "MinLength": "1"},
-            "Required": true
-          },
-          {
-            "Name": "organisation",
-            "AttributeDataType": "String",
-            "DeveloperOnlyAttribute": false,
-            "Mutable": true,
-            "StringAttributeConstraints": {"MaxLength": "256", "MinLength": "1"},
+            "StringAttributeConstraints": {"MaxLength": "2048", "MinLength": "1"},
             "Required": false
           }
         ],
         "Policies": {
           "PasswordPolicy": {
             "MinimumLength": 14,
-            "RequireLowercase": true,
-            "RequireNumbers": true,
+            "RequireLowercase": false,
+            "RequireNumbers": false,
             "RequireSymbols": false,
-            "RequireUppercase": true
+            "RequireUppercase": false
           }
         },
         "EmailVerificationSubject": "Welcome",
         "EmailVerificationMessage": "Your verification code is {####}.",
         "EmailConfiguration": {
-          "ReplyToEmailAddress": {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "ReplyToEmailAddress"]}
+          "ReplyToEmailAddress": {"Ref": "ReplyToEmailAddress"}
         },
         "AdminCreateUserConfig": {
           "AllowAdminCreateUserOnly": false,
@@ -100,34 +94,36 @@
       }
     },
 
-    "UserPoolClientAppUI": {
+    "UserPoolClient": {
       "Type": "AWS::Cognito::UserPoolClient",
       "DependsOn": ["UserPool"],
       "Properties": {
-        "ClientName": {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "AppClientName"]},
+        "ClientName": {"Ref": "AppClientName"},
         "UserPoolId": {"Ref": "UserPool"},
-        "RefreshTokenValidity": {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "AppClientRefreshTokenValidity"]},
+        "RefreshTokenValidity": {"Ref": "AppClientRefreshTokenValidity"},
         "GenerateSecret": false
       }
     },
 
     "IdentityPool": {
       "Type": "AWS::Cognito::IdentityPool",
-      "DependsOn": ["UserPool", "UserPoolClientAppUI"],
+      "DependsOn": ["UserPool", "UserPoolClient"],
       "Properties": {
-        "IdentityPoolName": {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "IdentityPoolName"]},
+        "IdentityPoolName": {"Ref": "IdentityPoolName"},
         "AllowUnauthenticatedIdentities": false,
-        "CognitoIdentityProviders": [{
-          "ClientId": {"Ref": "UserPoolClientAppUI"},
-          "ProviderName": {"Fn::GetAtt": ["UserPool", "ProviderName"]}
-        }]
+        "CognitoIdentityProviders": [
+          {
+            "ClientId": {"Ref": "UserPoolClient"},
+            "ProviderName": {"Fn::GetAtt": ["UserPool", "ProviderName"]}
+          }
+        ]
       }
     },
     "AuthRole": {
       "Type": "AWS::IAM::Role",
       "DependsOn": ["IdentityPool", "DynamoDBTable"],
       "Properties": {
-        "RoleName": {"Fn::Join": ["-", [{"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "IdentityPoolName"]}, "AuthRole"]]},
+        "RoleName": {"Fn::Join": ["-", [{"Ref": "IdentityPoolName"}, "AuthRole"]]},
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [{
@@ -145,7 +141,7 @@
           }]
         },
         "Policies": [{
-          "PolicyName": {"Fn::Join": ["-", [{"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "IdentityPoolName"]}, "AuthRolePolicy"]]},
+          "PolicyName": {"Fn::Join": ["-", [{"Ref": "IdentityPoolName"}, "AuthRolePolicy"]]},
           "PolicyDocument": {
             "Version": "2012-10-17",
             "Statement": [{
@@ -155,7 +151,7 @@
                 "cognito-sync:*",
                 "cognito-identity:*"
               ],
-              "Resource": ["*"]
+              "Resource": [{"Fn::Join": ["", ["arn:aws:cognito-identity:", {"Ref":"AWS::Region"}, ":", {"Ref":"AWS::AccountId"}, ":identitypool/", {"Ref": "IdentityPool"}]]}]
             },
             {
               "Effect": "Allow",
@@ -167,7 +163,7 @@
                 "dynamodb:UpdateItem",
                 "dynamodb:DeleteItem"
               ],
-              "Resource": [{"Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref":"AWS::Region"}, ":", {"Ref":"AWS::AccountId"}, ":table/", {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "LoginTrailTableName"]}]]}],
+              "Resource": [{"Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref":"AWS::Region"}, ":", {"Ref":"AWS::AccountId"}, ":table/", {"Ref": "LoginTrailTableName"}]]}],
               "Condition": {
                 "ForAllValues:StringEquals": {
                   "dynamodb:LeadingKeys": [
@@ -184,8 +180,8 @@
       "Type": "AWS::IAM::Role",
       "DependsOn": ["IdentityPool"],
       "Properties": {
-        "RoleName": {"Fn::Join": ["-", [{"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "IdentityPoolName"]}, "UnauthRole"]]},
-                "AssumeRolePolicyDocument": {
+        "RoleName": {"Fn::Join": ["-", [{"Ref": "IdentityPoolName"}, "UnauthRole"]]},
+        "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [{
             "Effect": "Allow",
@@ -202,7 +198,7 @@
           }]
         },
         "Policies": [{
-          "PolicyName": {"Fn::Join": ["-", [{"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "IdentityPoolName"]}, "UnauthRolePolicy"]]},
+          "PolicyName": {"Fn::Join": ["-", [{"Ref": "IdentityPoolName"}, "UnauthRolePolicy"]]},
           "PolicyDocument": {
             "Version": "2012-10-17",
             "Statement": [{
@@ -211,7 +207,7 @@
                 "mobileanalytics:PutEvents",
                 "cognito-sync:*"
               ],
-              "Resource": ["*"]
+              "Resource": [{"Fn::Join": ["", ["arn:aws:cognito-identity:", {"Ref":"AWS::Region"}, ":", {"Ref":"AWS::AccountId"}, ":identitypool/", {"Ref": "IdentityPool"}]]}]
             }]
           }
         }]
@@ -232,7 +228,7 @@
     "DynamoDBTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": {"Fn::FindInMap": ["Defaults", {"Ref":"Stage"}, "LoginTrailTableName"]},
+        "TableName": {"Ref": "LoginTrailTableName" },
         "AttributeDefinitions": [
           {"AttributeName": "userId", "AttributeType": "S"},
           {"AttributeName": "activityDate", "AttributeType": "S"}
@@ -259,12 +255,8 @@
       "Description": "The Amazon Resource Name (ARN) of the user pool."
     },
     "UserPoolClientId": {
-      "Value": {"Ref": "UserPoolClientAppUI"},
+      "Value": {"Ref": "UserPoolClient"},
       "Description": "The generated ID the Amazon Cognito user pool client."
-    },
-    "UserPoolClientName": {
-      "Value": {"Fn::GetAtt": ["UserPoolClientAppUI", "Name"]},
-      "Description": "The name of the user pool client."
     },
     "IdentityPoolId": {
       "Value": {"Ref": "IdentityPool"},

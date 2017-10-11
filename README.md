@@ -16,14 +16,14 @@ with the software or the use or other dealings in the software.
 ##### Table of Contents
 
 - [Scripts to manage templates](#scripts-to-manage-templates)
-- [Templates for creating EC2 and VPC aws resources](templates/EC2-VPC/README.md)
+- [Templates for CloudFront Web Distribution with S3](templates/CloudFront-S3/README.md)
+- [Templates for Cognito](templates/Cognito/README.md)
+- [Templates for databases](templates/Database/README.md)
+- [Templates for EC2 and VPC aws resources](templates/EC2-VPC/README.md)
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
 - [Templates for API Gateway and Lambda function](#templates-for-api-gateway-and-lambda-function)
 - [Templates for S3 management](#templates-for-s3-management)
 - [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
-- [Templates for CloudFront Web Distribution with S3](templates/CloudFront-S3/README.md)
-- [Templates for Cognito](templates/Cognito/README.md)
-- [Templates for databases](#templates-for-databases)
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
 - [Templates for logging and reporting](#templates-for-logging-and-reporting)

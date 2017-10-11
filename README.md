@@ -16,7 +16,7 @@ with the software or the use or other dealings in the software.
 ##### Table of Contents
 
 - [Scripts to manage templates](#scripts-to-manage-templates)
-- [Templates for creating EC2 and VPC aws resources](#templates-for-creating-ec2-and-vpc-aws-resources)
+- [Templates for creating EC2 and VPC aws resources](templates/EC2-VPC/README.md)
 - [Templates for Lambda function management](#templates-for-lambda-function-management)
 - [Templates for API Gateway and Lambda function](#templates-for-api-gateway-and-lambda-function)
 - [Templates for S3 management](#templates-for-s3-management)
@@ -39,54 +39,6 @@ with the software or the use or other dealings in the software.
 
 1. `deploy_to_s3.sh`
     - Deploy the latest templates to the specified S3 bucket.
-
-## Templates for creating EC2 and VPC aws resources
-
-1. `BaseInfrastructure-Linux-SaltMaster.template`
-    - Create VPC (at Sydney)
-    - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
-    - Create SecurityGroup for EC2 (Salt-master)
-        - Special inbound rules
-            - tcp 4505 0.0.0.0/0  salt-master publish-port
-            - tcp 4506 0.0.0.0/0  salt-master ret-port
-    - Create SecurityGroup for VPN
-
-1. `BaseInfrastructure-LinuxEC2Instances.template`
-    - Create VPC
-    - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
-    - Create SecurityGroup for EC2 instances (Linux)
-    - Create SecurityGroup for VPN
-
-1. `BaseInfrastructure-WinEC2Instances.template`
-    - Create VPC
-    - Create public Subnet, RouteTable, Route, InternetGateway, NetworkAcl 
-    - Create SecurityGroup for EC2 instances (Windows)
-    - Create SecurityGroup for VPN
-
-1. `EC2-SaltMaster.template`
-    - Create an EC2 instance from an AMI with the specified `EC2HostName`.
-    - If `SaltVersion` is specified, Salt-Master and Salt-Minion will be installed with initial configurations.
-    - Create an Elastic IP, attached to the EC2 instance.
-
-1. `EC2-Basic-Linux.template`
-    - Create an EC2 instance from an AMI with the specified `EC2HostName`.
-    - If `SaltMasterHost` and `SaltVersion` are specified, Salt-Minion will be installed
-      and the the salt-master host will be specified in `/etc/salt/minion`.    
-    - Create an Elastic IP, attached to the EC2 instance.
-
-1. `EC2-Basic-Windows.template`
-    - Create an EC2 instance from an AMI with the specified `EC2HostName`.
-    - Create an Elastic IP, attached to the EC2 instance.
-
-1. `EC2-and-SecurityGroup-support-NFS-Rabbitmq.template`
-    - Create an EC2 instance with an additional volume and Security Group supporting NFS and Rabbitmq ports.
-    - Create an additional EBS and attached to the EC2 instance.
-    - Create SecurityGroup for EC2 instances (Linux)
-        - Special inbound rules
-            - tcp 2049 NFS-port
-            - tcp 5672 Rabbitmq-port 
-    - Create an Elastic IP, attached to the EC2 instance.
-
 
 ## Templates for Lambda function management
 

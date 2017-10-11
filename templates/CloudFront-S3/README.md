@@ -1,4 +1,4 @@
-# CloudFront and S3 - Web Distribution
+# Templates for CloudFront and S3 - Web Distribution
 
 ```
  ____________     _____     

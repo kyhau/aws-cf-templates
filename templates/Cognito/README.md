@@ -1,6 +1,4 @@
-# Cognito
-
-## Templates for Cognito
+# Templates for Cognito User Pool and Identity Pool
 
 1. `Cognito-UserPool-IdentityPool-DynamoDB.template`
     - Create Cognito User Pool

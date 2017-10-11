@@ -1,9 +1,14 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "Creating Static Website with CloudFront and S3.",
+  "Description": "Creating CloudFront Web Distribution with S3 using S3 Origin.",
 
   "Parameters": {
+    "BucketRootLogName": {
+      "Description": "The name of the existing S3 bucket for logging (see S3-RootLogs.template).",
+      "Type": "String",
+      "Default": "my-app-root-logs"
+    },
     "CloudFrontPriceClass": {
       "Description": "The price class that corresponds with the maximum price that you want to pay for CloudFront service.",
       "Type": "String",
@@ -15,17 +20,17 @@
       "Type": "String",
       "Default": "3600"
     },
-    "DeployGroupName": {
-      "Description": "Name of the IAM Group for deployment.",
+    "DeployGroup": {
+      "Description": "Existing IAM Group for CI to run tests and do deployment",
       "Type": "String"
     },
     "ErrorDoc": {
       "Description": "The file name of the error document (e.g. error.html).",
       "Type": "String",
-      "Default": "error.html"
+      "Default": "index.html"
     },
     "IAMCertificateId": {
-      "Description": "Custom IAM (SSL) certificate to use with CloudFront distribution.",
+      "Description": "Custom SSL certificate to use with CloudFront distribution.",
       "Type": "String"
     },
     "IndexDoc": {
@@ -52,20 +57,24 @@
   },
 
   "Mappings": {
-    "Defaults": {
+    "StageMap": {
       "prod": {
-        "BillingTag": "Website-prod",
-        "CloudFrontAlias": "website-prod.example.com",
-        "CloudFrontOAI": "AAA0GB1JUSCV6D",
-        "LogBucketName": "website-prod-example-com-logs",
-        "RootBucketName": "website-prod-example-com"
+        "BillingTag": "PROF",
+        "CloudFrontAlias1": "api-prod.example.com",
+        "CloudFrontAlias2": "api.example.com",
+        "CloudFrontOAI": "",
+        "CloudFrontCUI": "",
+        "SubBucketName": "api-prod",
+        "RootBucketName": "api-prod-example-com"
       },
       "stage": {
-        "BillingTag": "Website-stage",
-        "CloudFrontAlias": "website-stage.example.com",
-        "CloudFrontOAI": "AAAS13JJRNE2Z",
-        "LogBucketName": "website-stage-example-com-logs",
-        "RootBucketName": "website-stage-example-com"
+        "BillingTag": "STAGE",
+        "CloudFrontAlias1": "api-stage.example.com",
+        "CloudFrontAlias2": "",
+        "CloudFrontOAI": "",
+        "CloudFrontCUI": "",
+        "SubBucketName": "api-stage",
+        "RootBucketName": "api-stage-example-com"
       }
     }
   },
@@ -78,35 +87,25 @@
   },
 
   "Resources": {
-    "LogBucket": {
-      "Type": "AWS::S3::Bucket",
-      "Properties": {
-        "AccessControl": "LogDeliveryWrite",
-        "BucketName": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "LogBucketName"]},
-        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "BillingTag"]}}]
-      },
-      "DeletionPolicy": "Delete"
-    },
-
     "RootBucket": {
       "Type": "AWS::S3::Bucket",
-      "DependsOn": ["LogBucket"],
       "Properties": {
-        "BucketName": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]},
-        "AccessControl": "PublicRead",
+        "BucketName": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]},
         "WebsiteConfiguration": {
           "IndexDocument": {"Ref":"IndexDoc"},
           "ErrorDocument": {"Ref":"ErrorDoc"}
         },
         "LoggingConfiguration": {
-          "DestinationBucketName": {"Ref":"LogBucket"}
+          "DestinationBucketName": {"Ref": "BucketRootLogName"},
+          "LogFilePrefix": {"Fn::Join": ["/", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "SubBucketName"]}, "s3"]]}
         },
         "VersioningConfiguration": {"Status": "Suspended"},
-        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "BillingTag"]}}]
+        "Tags": [{"Key": "Billing", "Value": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "BillingTag"]}}]
       },
       "DeletionPolicy": "Delete"
     },
-    "S3BucketPolicy": {
+
+    "StaticSiteBucketPolicy": {
       "Type": "AWS::S3::BucketPolicy",
       "DependsOn": ["RootBucket"],
       "Properties": {
@@ -114,42 +113,33 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Sid": "PublicReadGetObject",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Action": "s3:GetObject",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]}
-            },
-            {
               "Sid": "CloudFrontOriginAccess",
               "Action": ["s3:GetObject"],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]},
-              "Principal": {
-                "AWS": {"Fn::Join": ["", ["arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "CloudFrontOAI"]}]]}
-              }
+              "Principal": {"CanonicalUser": {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontCUI"]}},
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]}
             }
           ]
         }
       }
     },
-    "ManagedPolicyDeploy": {
+    "DeployPolicy": {
       "Type": "AWS::IAM::ManagedPolicy",
       "DependsOn": ["RootBucket"],
       "Properties": {
-        "Description": "Managed Policy for deployment",
+        "Description": "Managed Policy for deployment (S3 and CloudFront)",
         "PolicyDocument" : {
           "Version": "2012-10-17",
           "Statement": [
             {
-              "Action": ["s3:ListBucket" ],
+              "Action": ["s3:ListBucket"],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}]]}
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]}
             },
             {
-              "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject" ],
+              "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject", "S3:ListObjects"],
               "Effect": "Allow",
-              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, "/*" ]]}
+              "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, "/*"]]}
             },
             {
               "Action": ["CloudFront:CreateInvalidation"],
@@ -159,18 +149,32 @@
           ]
         },
         "Groups" : [
-          {"Ref":"DeployGroupName"}
+          {"Ref":"DeployGroup"}
         ]
       }
     },
 
     "CloudFront": {
       "Type": "AWS::CloudFront::Distribution",
+      "DependsOn": ["RootBucket"],
       "Properties": {
         "DistributionConfig": {
-          "Aliases": [{"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "CloudFrontAlias"]}],
+          "Aliases": {
+            "Fn::If": ["IsProduction",
+              [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontAlias1"]}, {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontAlias2"]}],
+              [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontAlias1"]}]
+            ]
+          },
+          "CustomErrorResponses": [
+            {
+               "ErrorCode": 403,
+               "ResponsePagePath": "/index.html",
+               "ResponseCode": "200",
+               "ErrorCachingMinTTL": 300
+            }
+          ],
           "DefaultCacheBehavior": {
-            "TargetOriginId": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}]]},
+            "TargetOriginId": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]},
             "ViewerProtocolPolicy": "redirect-to-https",
             "AllowedMethods": ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"],
             "ForwardedValues": {"QueryString": false},
@@ -183,14 +187,14 @@
           "Enabled": true,
           "Logging": {
             "IncludeCookies": "false",
-            "Bucket": {"Fn::Join": ["", [{"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "LogBucketName"]}, ".s3.amazonaws.com"]]},
-            "Prefix": "cf"
+            "Bucket": {"Fn::Join": ["", [{"Ref": "BucketRootLogName"}, ".s3.amazonaws.com"]]},
+            "Prefix": {"Fn::Join": ["/", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "SubBucketName"]}, "cf"]]}
           },
           "Origins": [{
-            "DomainName": {"Fn::Join": ["", [{"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}, ".s3-website-", {"Ref": "AWS::Region"}, ".amazonaws.com"]]},
-            "Id": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["Defaults", {"Ref":"StageName"}, "RootBucketName"]}]]},
-            "CustomOriginConfig": {
-              "OriginProtocolPolicy": "http-only"
+            "DomainName": {"Fn::Join": ["", [{"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}, ".s3.amazonaws.com"]]},
+            "Id": {"Fn::Join": ["-", ["S3", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "RootBucketName"]}]]},
+            "S3OriginConfig": {
+              "OriginAccessIdentity": {"Fn::Join": ["", ["origin-access-identity/cloudfront/", {"Fn::FindInMap": ["StageMap", {"Ref":"StageName"}, "CloudFrontOAI"]}]]}
             }
           }],
           "HttpVersion": "http2",
@@ -213,9 +217,13 @@
   },
 
   "Outputs": {
+    "CloudFrontDistributionID": {
+      "Value": {"Ref": "CloudFront"},
+      "Description": "CloudFront distribution ID"
+    },
     "CloudFrontURL": {
       "Value": {"Fn::GetAtt": ["CloudFront", "DomainName"]},
-      "Description": "URL for Cloudfront distribution"
+      "Description": "URL for CloudFront distribution"
     },
     "RootBucketUrl": {
       "Value": {"Fn::GetAtt": ["RootBucket", "WebsiteURL"]},

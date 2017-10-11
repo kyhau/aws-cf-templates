@@ -21,8 +21,8 @@ with the software or the use or other dealings in the software.
 - [Templates for API Gateway and Lambda function](#templates-for-api-gateway-and-lambda-function)
 - [Templates for S3 management](#templates-for-s3-management)
 - [Templates for S3 Static Website Hosting](#templates-for-s3-static-website-hosting)
-- [Templates for CloudFront Web Distribution with S3](#templates-for-cloudfront-web-distribution-with-s3)
-- [Templates for Cognito](#templates-for-cognito)
+- [Templates for CloudFront Web Distribution with S3](templates/CloudFront-S3/README.md)
+- [Templates for Cognito](templates/Cognito/README.md)
 - [Templates for databases](#templates-for-databases)
 - [Templates for Polly](#templates-for-polly)
 - [Templates for Inspector SNS](#templates-for-inspector-sns)
@@ -103,7 +103,7 @@ with the software or the use or other dealings in the software.
 
 ## Templates for S3 management
 
-1. `BN-S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
+1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
     - Create a S3 bucket with logging enabled.
     - Create a S3 bucket for logging.
     - Enable versioning if `EnableVersioning` set to `Enabled`.
@@ -124,18 +124,6 @@ with the software or the use or other dealings in the software.
     - Create Bucket Policy for PublicRead access.
     - Create Managed Policy for managing and uploading files to the S3 bucket.
     - Attach the Managed Policy to the given Group.
-
-## Templates for CloudFront Web Distribution with S3
-
-1. [templates/CloudFront-S3](templates/CloudFront-S3/README.md)
-
-## Templates for Cognito
-
-1. `Cognito.template`
-    - Create Cognito User Pool, Identity Pool, User Pool Clients and a DynamoDB for login trail.
-    
-1. `Cognito-Dev-GroupAndPolicy.template`
-    - Create Group and Policy for Development team to access Cognito related resources.
 
 ## Templates for Databases
 

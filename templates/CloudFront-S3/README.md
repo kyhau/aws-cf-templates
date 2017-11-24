@@ -29,9 +29,9 @@ See also [Using Amazon S3 Origins and Custom Origins for Web Distributions](
 
 ## Steps to create infrastructure
 
-1. Create a IAM Group for deployment.
+1. Create a IAM Group for deployment using `IAM-Group-ForDeployment.template` with CloudFormation.
 
-1. Create a S3 Log bucket as the root-logs bucket (for all logging) using `S3-RootLogs.template`.
+1. Create a S3 Log bucket as the root-logs bucket (for all logging) using `S3-RootLogs.template` with CloudFormation.
 
 1. Upload a server (ssl) certificate to IAM [using aws-cli](
    http://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html#upload-server-certificate):
@@ -58,7 +58,7 @@ See also [Using Amazon S3 Origins and Custom Origins for Web Distributions](
    Note that an Origin Access Identity [cannot be created with CloudFormation](
      https://stackoverflow.com/questions/20632828/aws-cloud-formation-script-to-create-s3-bucket-and-distribution).
 
-1. Use CloudFormation template `CloudFront-S3-WebDistribution-xxx.template`
+1. Use CloudFormation template `CloudFront-S3-WebDistribution-xxx.template` to
 
     1. Create S3 bucket with Static Website, Versioning and Logging enabled.
     1. Create Bucket Policy for PublicRead access (if using Custom Origins approach).

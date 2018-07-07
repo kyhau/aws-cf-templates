@@ -4,17 +4,26 @@
   "Description": "Create DynamoDB Table. http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html",
 
   "Parameters": {
+    "PointInTimeRecoveryEnabled": {
+      "Description": "Enables PointInTimeRecovery.",
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false"
+    },
     "PrimaryKeyAttributeName": {
       "Description": "The name of an attribute. Attribute names can be 1 – 255 characters long and have no character restrictions.",
       "Type": "String"
     },
     "PrimaryKeyAttributeType": {
       "Description": "The data type for the attribute. You can specify S for string data, N for numeric data, or B for binary data.",
-      "Type": "String"
+      "Type": "String",
+      "AllowedValues": ["S", "N", "B"],
+      "Default": "S"
     },
     "PrimaryKeyType": {
       "Description": "Represents the attribute data, consisting of the data type and the attribute value itself. You can specify HASH or RANGE.",
       "Type": "String",
+      "AllowedValues": ["HASH", "RANGE"],
       "Default": "HASH"
     },
     "ProvisionedThroughputReadCapacity": {
@@ -35,11 +44,10 @@
   },
 
   "Resources": {
-
     "DynamoDBTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": {"Ref": "TableName" },
+        "TableName": {"Ref": "TableName"},
         "AttributeDefinitions": [{
           "AttributeName": {"Ref": "PrimaryKeyAttributeName" },
           "AttributeType": {"Ref": "PrimaryKeyAttributeType" }
@@ -51,9 +59,60 @@
         "ProvisionedThroughput": {
           "ReadCapacityUnits": {"Ref": "ProvisionedThroughputReadCapacity" },
           "WriteCapacityUnits": {"Ref": "ProvisionedThroughputWriteCapacity" }
-        }
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": {"Ref": "PointInTimeRecoveryEnabled"}
+        },
+        "Tags": [
+          {"Key": "Billing", "Value": {"Ref": "TableName"}}
+        ]
+      }
+    },
+    "IamGroupRWDPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": {"Fn::Join": ["-", [{"Ref": "TableName"}, "RWD"]]},
+        "Description": "Managed Policy for accessing DynamoDB (read/write/delete)",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:ListTables",
+                "dynamodb:ListStreams",
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeLimits",
+                "dynamodb:DescribeTable",
+                "dynamodb:GetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:PutItem",
+                "dynamodb:Query",
+                "dynamodb:Scan",
+                "dynamodb:UpdateItem",
+                "dynamodb:UpdateTable"
+              ],
+              "Resource": [
+                {"Fn::Join": ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/", {"Ref": "TableName"}]]},
+              ]
+            }
+          ]
+        },
+        "Users": []
       }
     }
-  }
+  },
 
+  "Outputs": {
+    "DynamoDBTableName": {
+      "Description": "Table name",
+      "Value": {"Ref": "DynamoDBTable"}
+    },
+    "DynamoDBRWDPolicyName": {
+      "Description": "Name of Managed Policy allowing Read, Write and Delete access to DynamoDB tables",
+      "Value": {"Ref": "IamGroupRWDPolicy"}
+    }
+  }
 }

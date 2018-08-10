@@ -59,9 +59,11 @@ with the software or the use or other dealings in the software.
 ## Templates for S3 management
 
 1. `S3-WithVersioningAndLogging-ReadWriteDeletePolicy-ReadOnlyPolicy.template`
-    - Create a S3 bucket with logging enabled.
-    - Create a S3 bucket for logging.
+    - Create a S3 bucket.
+    - Enable server-side encryption if `ServerSideEncryptionAlgorithm` is set to `AES256` or `aws:kms`.
+      Also need to specify `KMSMasterKeyID` is `aws:kms` is selected. 
     - Enable versioning if `EnableVersioning` set to `Enabled`.
+    - Enable logging if `EnableLogging` set to `Enabled`. A S3 bucket for logging will also be created.
     - Optional - If `ReadWriteDeleteGroupName` is specified, create also an IAM Group and a Managed Policy giving
       Read-Write-Delete access to the S3 bucket.
     - Optional - If `ReadOnlyGroupName` is specified, create also an IAM Group and a Managed Policy giving

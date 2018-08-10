@@ -47,6 +47,9 @@ with the software or the use or other dealings in the software.
 
 ## Templates for API Gateway and Lambda function
 
+1. `ApiGateway-CloudWatch.template`
+    - Enable API Gateway CloudWatch logging
+
 1. `ApiGatewayInit-LambdaInit-andPolicies.template`
     - Create API Gateway with dummy content as a placeholder; the real content will be deployed by CI.
     - Create Lambda function with dummy content as a placeholder; the real function will be deployed by CI.

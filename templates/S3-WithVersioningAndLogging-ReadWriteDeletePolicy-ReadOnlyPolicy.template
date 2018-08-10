@@ -28,7 +28,7 @@
     },
     "KMSMasterKeyID": {
       "Description": "KMS Master Key ID. Required only if selecting aws:kms in ServerSideEncryptionAlgorithm.",
-      "Type": "String",
+      "Type": "String"
     },
     "ReadOnlyGroupName": {
       "Description": "Optional. Name of the Group to be created and given Read-only access to the given bucket.",
@@ -44,7 +44,7 @@
 
   "Conditions": {
     "SSEEnabled": {"Fn::Not": [{"Fn::Equals": ["None", {"Ref": "ServerSideEncryptionAlgorithm"}]}]},
-    "KMSKeySpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "KMSMasterKeyID"}]}]},
+    "UseKms": {"Fn::Equals": ["aws:kms", {"Ref": "ServerSideEncryptionAlgorithm"}]},
     "LoggingEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableLogging"}]},
     "VersioningEnabled": {"Fn::Equals": ["Enabled", {"Ref": "EnableVersioning"}]},
     "ReadOnlyGroupNameSpecified": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ReadOnlyGroupName"}]}]},
@@ -73,15 +73,17 @@
             {
               "ServerSideEncryptionConfiguration": [{
                 "ServerSideEncryptionByDefault": {
-                  "SSEAlgorithm": {"Ref": "ServerSideEncryptionAlgorithm"},
-                  {
                     "Fn::If" : [
-                      "KMSKeySpecified",
-                      {"KMSMasterKeyID": {"Ref": "KMSMasterKeyID"}},
-                      {"Ref": "AWS::NoValue"}
+                      "UseKms",
+                      {
+                        "SSEAlgorithm": {"Ref": "ServerSideEncryptionAlgorithm"},
+                        "KMSMasterKeyID": {"Ref": "KMSMasterKeyID"}
+                      },
+                      {
+                        "SSEAlgorithm": {"Ref": "ServerSideEncryptionAlgorithm"}
+                      }
                     ]
                   }
-                }
               }]
             },
             {"Ref": "AWS::NoValue"}

@@ -16,6 +16,10 @@
       "Type": "String",
       "Description": "Email address to notify if there are any DDB operational issues",
     },
+    "DynamoDBAlarmNamePrefix": {
+      "Type": "String",
+      "Description": "Prefix of the DDB CloudWatch Alarm Name",
+    },
     "PointInTimeRecoveryEnabled": {
       "Description": "Enables PointInTimeRecovery.",
       "Type": "String",
@@ -81,9 +85,12 @@
       "Type": "AWS::CloudWatch::Alarm",
       "DependsOn": "DdbAlarmSnsTopic",
       "Properties": {
-        "AlarmActions": ["Ref": "DdbAlarmSnsTopic"],
+        "AlarmActions": [{"Ref": "DdbAlarmSnsTopic"}],
         "AlarmDescription": {"Fn::Join": [" ",
           ["ConsumedReadCapacityUnits is higher than", {"Ref": "AlertHighConsumedReadCapacityUnits"}, "Units"]
+        ]},
+        "AlarmName": {"Fn::Join": ["/",
+          [{"Ref": "DynamoDBAlarmNamePrefix"}, {"Ref": "TableName"}, "ConsumedReadCapacityUnits"]
         ]},
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [{"Name": "TableName", "Value": {"Ref": "TableName"}}],
@@ -100,9 +107,12 @@
       "Type": "AWS::CloudWatch::Alarm",
       "DependsOn": "DdbAlarmSnsTopic",
       "Properties": {
-        "AlarmActions": ["Ref": "DdbAlarmSnsTopic"],
+        "AlarmActions": [{"Ref": "DdbAlarmSnsTopic"}],
         "AlarmDescription": {"Fn::Join": [" ",
           ["ConsumedWriteCapacityUnits is higher than", {"Ref": "AlertHighConsumedWriteCapacityUnits"}, "Units"]
+        ]},
+        "AlarmName": {"Fn::Join": ["/",
+          [{"Ref": "DynamoDBAlarmNamePrefix"}, {"Ref": "TableName"}, "ConsumedWriteCapacityUnits"]
         ]},
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [{"Name": "TableName", "Value": {"Ref": "TableName"}}],
@@ -121,6 +131,9 @@
       "Properties": {
         "AlarmActions": ["Ref": "DdbAlarmSnsTopic"],
         "AlarmDescription": "System errors",
+        "AlarmName": {"Fn::Join": ["/",
+          [{"Ref": "DynamoDBAlarmNamePrefix"}, {"Ref": "TableName"}, "SystemErrors"]
+        ]},
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [{"Name": "TableName", "Value": {"Ref": "TableName"}}],
         "EvaluationPeriods": 1,
@@ -136,8 +149,11 @@
       "Type": "AWS::CloudWatch::Alarm",
       "DependsOn": "DdbAlarmSnsTopic",
       "Properties": {
-        "AlarmActions": ["Ref": "DdbAlarmSnsTopic"],
+        "AlarmActions": [{"Ref": "DdbAlarmSnsTopic"}],
         "AlarmDescription": "User errors",
+        "AlarmName": {"Fn::Join": ["/",
+          [{"Ref": "DynamoDBAlarmNamePrefix"}, {"Ref": "TableName"}, "UserErrors"]
+        ]},
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "Dimensions": [{"Name": "TableName", "Value": {"Ref": "TableName"}}],
         "EvaluationPeriods": 1,

@@ -20,14 +20,12 @@
     "InstanceType": {
       "Description": "EC2 instance type",
       "Type": "String",
-      "Default": "t2.medium",
-      "AllowedValues": [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
-      "ConstraintDescription": "must be a valid EC2 instance type."
+      "Default": "t2.medium"
     },
     "VolumeType": {
       "Description": "The volume type. This can be gp2 for General Purpose SSD, or standard for Magnetic volume (add io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, if needed).",
       "Type": "String",
-      "Default": "standard",
+      "Default": "gp2",
       "AllowedValues": ["standard", "gp2"]
     },
     "VolumeSize": {
@@ -67,7 +65,7 @@
     "SaltVersion": {
       "Description": "Optional. Salt-minion version to be installed.",
       "Type": "String",
-      "Default": "2016.11.3"
+      "Default": "2017.7.3"
     },
     "ServiceTag": {
       "Description": "Value of the tag Service",
@@ -109,8 +107,11 @@
             "SaltEnabled",
             {
               "Fn::Join" : ["", [
-                "curl -o bootstrap-salt.sh -L https://bootstrap.saltstack.com\n",
-                "sudo sh bootstrap-salt.sh git v", {"Ref": "SaltVersion"}, "\n",
+                "wget -O - https://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest/SALTSTACK-GPG-KEY.pub | sudo apt-key add -", "\n",
+                "sudo echo 'deb http://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest xenial main' > /etc/apt/sources.list.d/saltstack.list", "\n",
+                "sudo echo 'deb http://repo.saltstack.com/apt/ubuntu/16.04/amd64/archive/", {"Ref": "SaltVersion"}, " xenial main' >> /etc/apt/sources.list.d/saltstack.list", "\n",
+                "sudo apt-get update", "\n",
+                "sudo apt-get install -y salt-minion=",{"Ref": "SaltVersion"}, "+ds-1 salt-common=",{"Ref": "SaltVersion"}, "+ds-1", "\n",
                 "sed -i -e 's/#master: salt/master: ", {"Ref": "SaltMasterHost"}, "/g' /etc/salt/minion\n",
                 "service salt-minion restart\n"
               ]]

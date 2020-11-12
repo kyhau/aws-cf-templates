@@ -1,9 +1,10 @@
 language: python
 python:
-  - "3.5"
+  - "3.8"
 cache: pip
 install:
   - pip install awscli
 script:
   - chmod +x deploy_to_s3.sh
-  - ./deploy_to_s3.sh
+  # TODO Enable it if you want to upload a copy to S3
+  #- ./deploy_to_s3.sh
